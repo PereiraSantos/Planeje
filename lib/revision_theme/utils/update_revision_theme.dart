@@ -7,14 +7,8 @@ class UpdateRevisionTheme implements RevisionThemeFactory {
 
   UpdateRevisionTheme(this._revisionThemeDatabase);
 
-  RevisionTheme? _revisionTheme;
-
   @override
-  set revisionTheme(RevisionTheme value) => _revisionTheme = value;
-
-  @override
-  Future<int?> write() async {
-    if (_revisionTheme == null) throw ('Teve passar um objeto revisionTheme');
-    return await _revisionThemeDatabase.updateRevisionTheme(_revisionTheme!);
+  Future<int?> write(RevisionTheme revisionTheme) async {
+    return await _revisionThemeDatabase.updateRevisionTheme(revisionTheme);
   }
 }

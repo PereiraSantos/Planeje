@@ -6,7 +6,7 @@ import 'package:planeje/revision/utils/register_revision.dart';
 import 'package:planeje/revision_theme/datasource/database/revision_theme_database.dart';
 import 'package:planeje/revision_theme/entities/revision_theme.dart';
 import 'package:planeje/revision_theme/utils/find_revision_theme.dart';
-import 'package:planeje/revision_theme/utils/register_revision_theme.dart';
+import 'package:planeje/revision_theme/utils/update_revision_theme.dart';
 import 'package:planeje/sync/revision_theme/revision_theme_controller.dart';
 import 'package:planeje/utils/networking/config_api.dart';
 import 'package:planeje/utils/networking/endpoint.dart';
@@ -37,17 +37,17 @@ class RevisionThemeSync {
     List<RevisionTheme> lists = await FindRevisionTheme(RevisionThemeDatabase()).findAllRevisionThemeSync() ?? [];
 
     if (lists.isNotEmpty) {
-      for (RevisionTheme item in lists) {
-        int idOld = item.id!;
+      for (RevisionTheme revisionTheme in lists) {
+        int idOld = revisionTheme.id!;
 
-        if (item.insertApp!) item.id = null;
+        if (revisionTheme.insertApp!) revisionTheme.id = null;
 
-        Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.theme]).post(RevisionTheme.fromObjectToMap(item));
+        Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.theme]).post(RevisionTheme.fromObjectToMap(revisionTheme));
 
         if (response.data != null) {
-          item.sync = true;
+          revisionTheme.sync = true;
 
-          await UpdateRevisionTheme(RevisionThemeDatabase(), revisionTheme: item).write();
+          await UpdateRevisionTheme(RevisionThemeDatabase()).write(revisionTheme);
 
           await updateIdRevisionTheme(response.data['id'], idOld);
         }
@@ -72,13 +72,13 @@ class RevisionThemeSync {
     List<RevisionTheme> lists = await FindRevisionTheme(RevisionThemeDatabase()).findRevisionThemeDisable() ?? [];
 
     if (lists.isNotEmpty) {
-      for (RevisionTheme item in lists) {
-        Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.theme, Endpoint.update]).post(RequestItem().convert(item));
+      for (RevisionTheme revisionTheme in lists) {
+        Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.theme, Endpoint.update]).post(RequestItem().convert(revisionTheme));
 
         if (response.data != null) {
-          item.sync = true;
+          revisionTheme.sync = true;
 
-          await UpdateRevisionTheme(RevisionThemeDatabase(), revisionTheme: item).write();
+          await UpdateRevisionTheme(RevisionThemeDatabase()).write(revisionTheme);
         }
       }
     }

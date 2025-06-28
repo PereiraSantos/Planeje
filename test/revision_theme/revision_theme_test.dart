@@ -9,26 +9,22 @@ void main() {
   group('Teste de registro tema de revisão', () {
     test('Espero que registre', () async {
       InsertRevisioTheme insertRevisioTheme = InsertRevisioTheme(NockRevisionThemeDatabase());
-      insertRevisioTheme.revisionTheme = RevisionTheme(description: 'Flutter');
 
-      int result = await insertRevisioTheme.write();
+      int result = await insertRevisioTheme.write(RevisionTheme(description: 'Flutter'));
 
       expect(1, result);
     });
     test('Espero que registre list', () async {
       InsertRevisioTheme insertRevisioTheme = InsertRevisioTheme(NockRevisionThemeDatabase());
-      insertRevisioTheme.revisionThemes = [RevisionTheme(description: 'Flutter'), RevisionTheme(description: 'Poo')];
 
-      List<int> result = await insertRevisioTheme.writeList();
+      List<int> result = await insertRevisioTheme.writeList([RevisionTheme(description: 'Flutter'), RevisionTheme(description: 'Poo')]);
 
       expect([1, 2], result);
     });
     test('Espero que faça update', () async {
       UpdateRevisionTheme updateRevisioTheme = UpdateRevisionTheme(NockRevisionThemeDatabase());
 
-      updateRevisioTheme.revisionTheme = RevisionTheme(id: 1, description: 'Flutter');
-
-      int? result = await updateRevisioTheme.write();
+      int? result = await updateRevisioTheme.write(RevisionTheme(id: 1, description: 'Flutter'));
 
       expect(1, result);
     });
@@ -37,44 +33,35 @@ void main() {
 
 class NockRevisionThemeDatabase implements RevisionThemeDatabaseFactory {
   @override
-  Future<void> deleteTable() {
-    // TODO: implement deleteTable
+  Future<void> deleteTable() async {}
+
+  @override
+  Future<RevisionTheme?> disableRevisionThemeById(int id) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<RevisionTheme?> disableRevisionThemeById(int id) {
-    // TODO: implement disableRevisionThemeById
+  Future<List<RevisionTheme>> findAllRevisionTheme() async {
     throw UnimplementedError();
   }
 
   @override
-  Future<List<RevisionTheme>> findAllRevisionTheme() {
-    // TODO: implement findAllRevisionTheme
+  Future<List<RevisionTheme>?> findAllRevisionThemeSync() async {
     throw UnimplementedError();
   }
 
   @override
-  Future<List<RevisionTheme>?> findAllRevisionThemeSync() {
-    // TODO: implement findAllRevisionThemeSync
+  Future<List<RevisionThemeComplement>> findRevisionThemeByDescription(String text) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<List<RevisionThemeComplement>> findRevisionThemeByDescription(String text) {
-    // TODO: implement findRevisionThemeByDescription
+  Future<RevisionTheme?> findRevisionThemeById(int id) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<RevisionTheme?> findRevisionThemeById(int id) {
-    // TODO: implement findRevisionThemeById
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<RevisionTheme>?> findRevisionThemeDisable() {
-    // TODO: implement findRevisionThemeDisable
+  Future<List<RevisionTheme>?> findRevisionThemeDisable() async {
     throw UnimplementedError();
   }
 

@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:planeje/revision_theme/entities/revision_theme.dart';
 import 'package:planeje/revision_theme/utils/insert_revision_theme.dart';
 import 'package:planeje/utils/message_user.dart';
-import 'package:planeje/utils/type_message.dart';
+import 'package:planeje/utils/notification.dart';
 import 'package:planeje/widgets/bottom_sheet/bottom_sheet_widget.dart';
 import 'package:planeje/widgets/text_button_widget.dart';
 import 'package:planeje/widgets/text_form_field_widget.dart';
 
 class RegisterRevisionThemePage extends StatelessWidget {
-  RegisterRevisionThemePage({super.key, required this.register, required this.statusNotification, this.revisionTheme}) {
+  RegisterRevisionThemePage({super.key, required this.register, required this.notification, this.revisionTheme}) {
     description.text = revisionTheme?.description ?? '';
   }
 
   final RevisionThemeFactory register;
   final formKey = GlobalKey<FormState>();
   final TextEditingController description = TextEditingController();
-  final StatusNotification statusNotification;
+  final NotificationRepository notification;
   final RevisionTheme? revisionTheme;
 
   @override
@@ -27,7 +27,7 @@ class RegisterRevisionThemePage extends StatelessWidget {
         backgroundColor: const Color(0xffffffff),
         elevation: 0,
         title: Text(
-          statusNotification.getTypeQuiz!.name,
+          notification.title(),
           style: const TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold),
         ),
       ),
@@ -64,14 +64,13 @@ class RegisterRevisionThemePage extends StatelessWidget {
 
                 if (revisionTheme?.id == null) revisionTheme?.setInsertApp(true);
 
-                register.revisionTheme = revisionTheme!;
-                var idRevision = await register.write();
+                var idRevision = await register.write(revisionTheme!);
 
                 if (idRevision == null) return;
 
                 if (context.mounted) {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  await MessageUser.message(context, statusNotification.message);
+                  await MessageUser.message(context, notification.message());
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context, true);
                 }

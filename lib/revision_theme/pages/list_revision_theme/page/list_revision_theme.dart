@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:planeje/revision/datasource/database/revision_database.dart';
+import 'package:planeje/revision/entities/revision.dart';
 import 'package:planeje/revision/pages/list_revision/page/list_revision.dart';
+import 'package:planeje/revision/utils/find_revision.dart';
 
 import 'package:planeje/revision_theme/datasource/database/revision_theme_database.dart';
 import 'package:planeje/revision_theme/entities/revision_theme_complement.dart';
+import 'package:planeje/revision_theme/utils/valided.dart';
 import 'package:planeje/revision_theme/utils/find_revision_theme.dart';
 import 'package:planeje/revision_theme/utils/insert_revision_theme.dart';
 import 'package:planeje/revision_theme/utils/update_revision_theme.dart';
-import 'package:planeje/utils/format_date.dart';
 import 'package:planeje/utils/message_user.dart';
+import 'package:planeje/utils/notification.dart';
 import 'package:planeje/utils/transitions_builder.dart';
-import 'package:planeje/utils/type_message.dart';
 
 import 'package:planeje/widgets/app_bar_widget/add_app_bar_widget.dart';
+import 'package:planeje/widgets/dialog_delete.dart';
 import 'package:planeje/widgets/search.dart';
 
 import '../../regsister_revision_theme/page/register_revision_theme_page.dart';
-import '../component/dialog_delete.dart';
 
 class ListRevisionTheme extends StatefulWidget {
   const ListRevisionTheme({super.key});
@@ -26,23 +29,6 @@ class ListRevisionTheme extends StatefulWidget {
 
 class _ListRevisionThemeState extends State<ListRevisionTheme> {
   String search = '';
-
-  String componentDate(String dateRevision) {
-    DateTime date = FormatDate.dateTimeParse(dateRevision);
-    int day = FormatDate.newDate().difference(date).inDays;
-
-    return day > 0 ? '- há $day dias' : '';
-  }
-
-  String _validDateIsNull(String? dateRevision) {
-    if (dateRevision == null) return '';
-    return '${FormatDate.formatDateString(dateRevision)} ${componentDate(dateRevision)}';
-  }
-
-  String _validTitleDescriptuionIsNull(String? title, String? description) {
-    if (title == null || description == null) return 'Última revisão: Não há';
-    return 'Última revisão: $title - $description ';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +51,7 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
               var result = await TransitionsBuilder.navigateTo(
                 context,
                 RegisterRevisionThemePage(
-                  statusNotification: StatusNotification(),
+                  notification: RegisterNotification(),
                   register: InsertRevisioTheme(RevisionThemeDatabase()),
                 ),
               );
@@ -94,7 +80,21 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                       confirmDismiss: (DismissDirection direction) async {
                         if (direction == DismissDirection.startToEnd) {
                           try {
-                            return await DialogDelete.build(context, snapshot.data![index]);
+                            return await DialogDelete().build(
+                              context,
+                              snapshot.data![index].revisionDescription!,
+                              () async {
+                                List<Revision> list = await GetRevision(RevisionDatabase()).findRevisioByIdRevisionTheme(snapshot.data![index].id!) ?? [];
+
+                                if (list.isNotEmpty) {
+                                  // ignore: use_build_context_synchronously
+                                  await MessageUser.message(context, 'Não é possível remover tem revisão vinculada!!!!');
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.pop(context, false);
+                                  return;
+                                }
+                              },
+                            );
                           } catch (e) {
                             // ignore: use_build_context_synchronously
                             await MessageUser.message(context, 'Erro ao abrir dialogo');
@@ -107,7 +107,7 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                               RegisterRevisionThemePage(
                                 register: UpdateRevisionTheme(RevisionThemeDatabase()),
                                 revisionTheme: snapshot.data![index],
-                                statusNotification: StatusNotification(TypeMessage.Atualizar),
+                                notification: UpdateNotification(),
                               ),
                             );
                             if (result) setState(() {});
@@ -152,12 +152,12 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                                 ),
                               ],
                             ),
-                            Text(_validTitleDescriptuionIsNull(snapshot.data![index].title, snapshot.data![index].revisionDescription),
+                            Text(Valided().validTitleDescriptuionIsNull(snapshot.data![index].title, snapshot.data![index].revisionDescription),
                                 style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300), overflow: TextOverflow.ellipsis, maxLines: 2),
                             Visibility(
                               visible: snapshot.data![index].dateRevision != null,
                               child: Text(
-                                _validDateIsNull(snapshot.data![index].dateRevision),
+                                Valided().validDateIsNull(snapshot.data![index].dateRevision),
                                 style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
                               ),
                             ),
