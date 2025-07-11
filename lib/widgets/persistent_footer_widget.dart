@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class BottomSheetWidget extends StatelessWidget {
-  BottomSheetWidget({super.key, required this.children});
+class PersistentFooterWidget extends StatelessWidget {
+  PersistentFooterWidget({super.key, required this.children});
 
   List<Widget> children = [];
 

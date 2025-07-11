@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planeje/revision_theme/utils/register_revision_theme.dart';
 import 'package:planeje/utils/message_user.dart';
-import 'package:planeje/widgets/bottom_sheet/bottom_sheet_widget.dart';
+import 'package:planeje/widgets/persistent_footer_widget.dart';
 import 'package:planeje/widgets/text_button_widget.dart';
 import 'package:planeje/widgets/text_form_field_widget.dart';
 
@@ -46,42 +46,44 @@ class RegisterRevisionThemePage extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: BottomSheetWidget(
-        children: [
-          TextButtonWidget.cancel(() => Navigator.pop(context, false)),
-          TextButtonWidget.save(
-            () async {
-              try {
-                if (!formKey.currentState!.validate()) return;
+      persistentFooterButtons: [
+        PersistentFooterWidget(
+          children: [
+            TextButtonWidget.cancel(() => Navigator.pop(context, false)),
+            TextButtonWidget.save(
+              () async {
+                try {
+                  if (!formKey.currentState!.validate()) return;
 
-                revisionTheme.revisionTheme?.setId(revisionTheme.revisionTheme?.id);
+                  revisionTheme.revisionTheme?.setId(revisionTheme.revisionTheme?.id);
 
-                revisionTheme.revisionTheme?.setDescription(description.text);
+                  revisionTheme.revisionTheme?.setDescription(description.text);
 
-                revisionTheme.revisionTheme?.setSync();
+                  revisionTheme.revisionTheme?.setSync();
 
-                if (revisionTheme.revisionTheme?.id == null) revisionTheme.revisionTheme?.setInsertApp(true);
+                  if (revisionTheme.revisionTheme?.id == null) revisionTheme.revisionTheme?.setInsertApp(true);
 
-                var idRevision = await revisionTheme.write();
+                  var idRevision = await revisionTheme.write();
 
-                if (idRevision == null) return;
+                  if (idRevision == null) return;
 
-                if (idRevision != null && context.mounted) {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  await MessageUser.message(context, revisionTheme.message!.message);
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context, true);
+                  if (idRevision != null && context.mounted) {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    await MessageUser.message(context, revisionTheme.message!.message);
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context, true);
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    await MessageUser.message(context, 'Erro ao registrar!!!, $e');
+                  }
                 }
-              } catch (e) {
-                if (context.mounted) {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  await MessageUser.message(context, 'Erro ao registrar!!!, $e');
-                }
-              }
-            },
-          ),
-        ],
-      ),
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

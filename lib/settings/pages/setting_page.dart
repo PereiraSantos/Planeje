@@ -7,7 +7,7 @@ import 'package:planeje/login/utils/credentials.dart';
 import 'package:planeje/settings/utils/sync.dart';
 import 'package:planeje/utils/message_user.dart';
 import 'package:planeje/utils/transitions_builder.dart';
-import 'package:planeje/widgets/bottom_sheet/bottom_sheet_widget.dart';
+import 'package:planeje/widgets/persistent_footer_widget.dart';
 import 'package:planeje/widgets/privacy_policy.dart';
 
 import 'package:planeje/widgets/text_button_widget.dart';
@@ -99,40 +99,42 @@ class SettingPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: BottomSheetWidget(
-        children: [
-          TextButtonWidget.sync(() async {
-            try {
-              await sync.postDataDisable();
+      persistentFooterButtons: [
+        PersistentFooterWidget(
+          children: [
+            TextButtonWidget.sync(() async {
+              try {
+                await sync.postDataDisable();
 
-              await sync.postData();
+                await sync.postData();
 
-              await sync.receiveData();
+                await sync.receiveData();
 
-              if (context.mounted) await MessageUser.message(context, 'Sincronização finalizada!!!');
-            } catch (e) {
-              if (context.mounted) await MessageUser.message(context, 'Erro ao sincronização!!!');
-            }
-          }),
-          TextButtonWidget(
-            label: 'DESLOGAR',
-            onClick: () async {
-              User? user = await Credentials(UserDatabase()).findUserById();
+                if (context.mounted) await MessageUser.message(context, 'Sincronização finalizada!!!');
+              } catch (e) {
+                if (context.mounted) await MessageUser.message(context, 'Erro ao sincronização!!!');
+              }
+            }),
+            TextButtonWidget(
+              label: 'DESLOGAR',
+              onClick: () async {
+                User? user = await Credentials(UserDatabase()).findUserById();
 
-              // ignore: use_build_context_synchronously
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => LoginPage(
-                    login: user?.login,
-                    password: user?.password,
-                    keepMeLoggedIn: user?.keepLogged,
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => LoginPage(
+                      login: user?.login,
+                      password: user?.password,
+                      keepMeLoggedIn: user?.keepLogged,
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+                );
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

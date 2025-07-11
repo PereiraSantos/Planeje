@@ -1567,9 +1567,8 @@ class _$RevisionThemeDao extends RevisionThemeDao {
   }
 
   @override
-  Future<void> updateRevisionThemeList(
-      List<RevisionTheme> revisionThemes) async {
-    await _revisionThemeUpdateAdapter.updateList(
+  Future<int> updateRevisionThemeList(List<RevisionTheme> revisionThemes) {
+    return _revisionThemeUpdateAdapter.updateListAndReturnChangedRows(
         revisionThemes, OnConflictStrategy.abort);
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planeje/annotation/utils/register_annotation.dart';
 import 'package:planeje/utils/message_user.dart';
-import 'package:planeje/widgets/bottom_sheet/bottom_sheet_widget.dart';
+import 'package:planeje/widgets/persistent_footer_widget.dart';
 
 import '../../../../widgets/text_button_widget.dart';
 import '../component/drop_down_revision.dart';
@@ -90,33 +90,35 @@ class RegisterAnnotation extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: BottomSheetWidget(
-        children: [
-          TextButtonWidget.cancel(() => Navigator.pop(context, false)),
-          TextButtonWidget.save(
-            () async {
-              try {
-                if (!formKey.currentState!.validate()) return;
+      persistentFooterButtons: [
+        PersistentFooterWidget(
+          children: [
+            TextButtonWidget.cancel(() => Navigator.pop(context, false)),
+            TextButtonWidget.save(
+              () async {
+                try {
+                  if (!formKey.currentState!.validate()) return;
 
-                registerAnnotation.annotation!.setTitle(title.text);
-                registerAnnotation.annotation!.setText(description.text);
-                registerAnnotation.annotation!.setDateText(registerAnnotation.annotation!.dateText);
+                  registerAnnotation.annotation!.setTitle(title.text);
+                  registerAnnotation.annotation!.setText(description.text);
+                  registerAnnotation.annotation!.setDateText(registerAnnotation.annotation!.dateText);
 
-                await registerAnnotation.write();
+                  await registerAnnotation.write();
 
-                if (context.mounted) {
-                  await MessageUser.message(context, registerAnnotation.message!.message);
+                  if (context.mounted) {
+                    await MessageUser.message(context, registerAnnotation.message!.message);
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context, true);
+                  }
+                } catch (e) {
                   // ignore: use_build_context_synchronously
-                  Navigator.pop(context, true);
+                  await MessageUser.message(context, 'Erro ao registrar anotação');
                 }
-              } catch (e) {
-                // ignore: use_build_context_synchronously
-                await MessageUser.message(context, 'Erro ao registrar anotação');
-              }
-            },
-          ),
-        ],
-      ),
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -12,7 +12,7 @@ abstract class RevisionThemeDatabaseFactory {
   Future<int> insertRevisionTheme(RevisionTheme revisionTheme);
   Future<List<int>> insertRevisionThemeList(List<RevisionTheme> revisionThemes);
   Future<int?> updateRevisionTheme(RevisionTheme revisionTheme);
-  Future<void> updateRevisionThemeList(List<RevisionTheme> revisionThemes);
+  Future<int?> updateRevisionThemeList(List<RevisionTheme> revisionThemes);
   Future<List<RevisionTheme>?> findRevisionThemeDisable();
   Future<void> deleteTable();
 }
@@ -67,7 +67,7 @@ class RevisionThemeDatabase implements RevisionThemeDatabaseFactory {
   }
 
   @override
-  Future<void> updateRevisionThemeList(List<RevisionTheme> revisionThemes) async {
+  Future<int?> updateRevisionThemeList(List<RevisionTheme> revisionThemes) async {
     final database = await getInstance();
     return await database.revisionThemeDao.updateRevisionThemeList(revisionThemes);
   }
