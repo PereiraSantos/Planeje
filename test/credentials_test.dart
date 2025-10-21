@@ -1,89 +1,71 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:planeje/credentials/datasources/repository/database_repository.dart';
+import 'package:planeje/credentials/entities/session.dart';
 import 'package:planeje/credentials/entities/user.dart';
-import 'package:planeje/credentials/usercases/credentials.dart';
+import 'package:planeje/credentials/repositories/authentication_repository.dart';
+import 'package:planeje/credentials/repositories/user_repository.dart';
+import 'package:planeje/credentials/usercases/authentication_local.dart';
+import 'package:planeje/credentials/usercases/session_manager.dart';
+import 'package:planeje/credentials/usercases/user_credentials.dart';
 
 class SqliteDatabaseMock implements DatabaseRepository {
   List<User> users = [];
 
   @override
-  Future<bool> register(User user) async {
-    users.add(user);
-    return true;
+  Future<User> findByEmail(String email, String password) async {
+    return User('email@teste.com', '123');
   }
 
   @override
-  Future<bool> authentic(User user) async {
-    List<User> result = users.where((e) => e.login == user.login && e.password == user.password).toList();
-    if (result.isNotEmpty) return true;
-    return false;
+  Future<User> saveUser(User user) async {
+    return user;
   }
 
   @override
-  Future<bool> exchange(User user, String password) async {
-    int index = users.indexWhere((e) => e.password == user.password);
-
-    users[index].password = password;
-
-    return true;
-  }
-
-  @override
-  Future<String> forgot(String login) async {
-    int index = users.indexWhere((e) => e.login == login);
-
-    users[index].password = '000';
-
-    return users[index].password;
-  }
-
-  @override
-  Future<bool> logout(User user) async {
-    users.removeWhere((e) => e.id == user.id);
-    return true;
+  Future<String> update(String token) async {
+    return '12345';
   }
 }
 
 void main() {
+  AuthenticationRepository authenticationLocal = AuthenticationLocal(SqliteDatabaseMock());
+  UserRepository authentication = UserCredentials(SqliteDatabaseMock());
+
   group('Credenciais', () {
-    Credentials credentials = Credentials(SqliteDatabaseMock());
-    User user = User('m', '123', true);
+    test('Registrar novo usuário ', () async {
+      User user = await authentication.register("email@teste.com", "123");
 
-    test('Espero que registre um usuário', () async {
-      bool result = await credentials.register(user);
-
-      expect(result, true);
+      expect(user.email, 'email@teste.com');
+      expect(user.password, '123');
     });
 
-    test('Autenticação do usuário - espero que retorne verdadeiro', () async {
-      bool result = await credentials.authentic(user);
+    test('autenticação bem-sucedida local', () async {
+      bool auth = await authenticationLocal.authenticate("email@teste.com", "123");
+      Session? session = SessionManager().getSession("email@teste.com");
 
-      expect(result, true);
+      expect(auth, true);
+      expect(session!.id, 'email@teste.com');
     });
 
-    test('Autenticação do usuário incorreto - espero que retorne false', () async {
-      bool result = await credentials.authentic(User('j', '123', false));
+    test('autenticação falha', () async {
+      bool auth = await authenticationLocal.authenticate("email@teste.com", "122");
 
-      expect(result, false);
+      expect(auth, false);
     });
 
-    test('Espero que troque de senha', () async {
-      bool result = await credentials.exchange(user, '321');
+    test('autenticação troca de senha com usuário válido', () async {
+      User user = await authentication.findByEmail("email@teste.com", "123");
+      String passwordTemp = await authentication.update(user.email);
 
-      expect(result, true);
+      expect(passwordTemp, '12345');
     });
 
-    test('Espero uma nova senha', () async {
-      String result = await credentials.forgot('m');
+    test('autenticação troca de senha com usuário invalido', () async {
+      User user = await authentication.findByEmail("email@teste.com", "122");
+      String passwordTemp = await authentication.update(user.email);
 
-      expect(result, '000');
-    });
-
-    test('Espero deslogar', () async {
-      bool result = await credentials.logout(user);
-
-      expect(result, true);
+      expect(passwordTemp, '12345');
     });
   });
 }

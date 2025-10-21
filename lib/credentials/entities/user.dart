@@ -4,16 +4,13 @@ import 'package:floor/floor.dart';
 class User {
   @PrimaryKey(autoGenerate: false)
   @ColumnInfo(name: 'id')
-  int id = 1;
+  int? id;
 
-  @ColumnInfo(name: 'login')
-  String login;
+  @ColumnInfo(name: 'email')
+  String email;
 
   @ColumnInfo(name: 'password')
   String password;
 
-  @ColumnInfo(name: 'keep_logged')
-  bool keepLogged;
-
-  User(this.login, this.password, this.keepLogged);
+  User(this.email, this.password, {this.id});
 }

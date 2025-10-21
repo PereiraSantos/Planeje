@@ -1,9 +1,0 @@
-import 'package:planeje/credentials/entities/user.dart';
-
-abstract class CredentialsRepository {
-  Future<bool> register(User user);
-  Future<bool> authentic(User user);
-  Future<String> forgot(String login);
-  Future<bool> logout(User user);
-  Future<bool> exchange(User user, String password);
-}
