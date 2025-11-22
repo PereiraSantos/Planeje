@@ -13,21 +13,21 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.example.planeje"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "25.1.8937393"
+    ndkVersion = "27.0.12077973"
 
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_11
     }
 
     defaultConfig {
         applicationId = "com.br.planeje"
-        minSdk = 21
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = 35
         compileSdk = 35
         versionCode = flutter.versionCode

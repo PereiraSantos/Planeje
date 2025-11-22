@@ -41,7 +41,10 @@ class _ListQuizState extends State<ListQuiz> {
         backgroundColor: const Color(0xffffffff),
         elevation: 0,
         toolbarHeight: 46,
-        title: const Text('Quiz', style: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Quiz',
+          style: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold),
+        ),
         actions: [
           Search(
             setValue: (value) {
@@ -52,12 +55,14 @@ class _ListQuizState extends State<ListQuiz> {
             onClick: () async {
               var result = await Navigator.of(context).push(
                 TransitionsBuilder.createRoute(
-                  RegisterQuizPage(registerQuiz: SaveQuiz(QuizDatabase(), quiz: Quiz(), message: StatusNotification())),
+                  RegisterQuizPage(
+                    registerQuiz: SaveQuiz(QuizDatabase(), quiz: Quiz(), message: StatusNotification()),
+                  ),
                 ),
               );
               if (result) setState(() {});
             },
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -92,30 +97,26 @@ class _ListQuizState extends State<ListQuiz> {
                               tableQuestionNotifier.clearList();
 
                               if (!context.mounted) return;
-                              await MessageUser.message(context, 'Removido com sucesso');
+                              MessageUser.success(context, 'Removido com sucesso');
                               setState(() {});
                             }
                           } catch (e) {
                             // ignore: use_build_context_synchronously
-                            await MessageUser.message(context, 'Erro ao abrir dialogo');
+                            MessageUser.error(context, 'Erro ao abrir dialogo');
                           }
                         } else {
                           try {
                             var result = await Navigator.of(context).push(
                               TransitionsBuilder.createRoute(
                                 RegisterQuizPage(
-                                  registerQuiz: UpdateQuiz(
-                                    QuizDatabase(),
-                                    quiz: (snapshot.data![index]),
-                                    message: StatusNotification(TypeMessage.Atualizar),
-                                  ),
+                                  registerQuiz: UpdateQuiz(QuizDatabase(), quiz: (snapshot.data![index]), message: StatusNotification(TypeMessage.Atualizar)),
                                 ),
                               ),
                             );
                             if (result) setState(() {});
                           } catch (e) {
                             // ignore: use_build_context_synchronously
-                            MessageUser.message(context, 'Erro na rota quiz revisão');
+                            MessageUser.error(context, 'Erro na rota quiz revisão');
                           }
                         }
                         return null;
@@ -137,14 +138,19 @@ class _ListQuizState extends State<ListQuiz> {
                               visible: snapshot.data![index].topic != '',
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
-                                child: Text(snapshot.data![index].topic ?? '',
-                                    style: const TextStyle(fontSize: 16, color: Colors.black54, fontWeight: FontWeight.w500)),
+                                child: Text(
+                                  snapshot.data![index].topic ?? '',
+                                  style: const TextStyle(fontSize: 16, color: Colors.black54, fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 05),
-                              child: Text("${snapshot.data![index].description}?",
-                                  overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 15, color: Colors.black54, fontWeight: FontWeight.w400)),
+                              child: Text(
+                                "${snapshot.data![index].description}?",
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 15, color: Colors.black54, fontWeight: FontWeight.w400),
+                              ),
                             ),
                             FutureBuilder(
                               future: GetQuestion(QuestionDatabase()).getQuestionByIdQuiz(snapshot.data![index].id!),
@@ -156,9 +162,7 @@ class _ListQuizState extends State<ListQuiz> {
 
                                   return const SizedBox();
                                 }
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
+                                return const Center(child: CircularProgressIndicator());
                               },
                             ),
                           ],
@@ -176,9 +180,7 @@ class _ListQuizState extends State<ListQuiz> {
                 );
               }
             } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),

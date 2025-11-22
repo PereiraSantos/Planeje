@@ -3,13 +3,11 @@ import 'package:planeje/credentials/repositories/authentication_repository.dart'
 class AuthenticationHttp implements AuthenticationRepository {
   @override
   Future<bool> authenticate(String email, String password) async {
-    // TODO: implement authenticate
-    throw UnimplementedError();
+    return true;
   }
 
   @override
   bool exchange(String token) {
-    // TODO: implement exchange
-    throw UnimplementedError();
+    return true;
   }
 }

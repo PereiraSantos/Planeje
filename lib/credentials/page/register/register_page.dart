@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:planeje/login/datasource/database/user_database.dart';
-import 'package:planeje/login/entities/user.dart';
-import 'package:planeje/login/pages/login_page.dart';
-import 'package:planeje/login/utils/credentials.dart';
-import 'package:planeje/utils/message_user.dart';
+
+import 'package:planeje/credentials/page/login/login_page.dart';
+import 'package:planeje/credentials/page/register/register_controller.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
 
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _login = TextEditingController();
+  final GlobalKey<FormState> _formKeyRegister = GlobalKey<FormState>();
+  final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  final RegisterController _registerController = RegisterController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +20,13 @@ class RegisterPage extends StatelessWidget {
         margin: const EdgeInsets.only(left: 40, right: 40),
         child: SingleChildScrollView(
           child: Form(
-            key: _formKey,
+            key: _formKeyRegister,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
-                  controller: _login,
-                  decoration: const InputDecoration(
-                    hintText: 'Login',
-                  ),
+                  controller: _email,
+                  decoration: const InputDecoration(hintText: 'Email'),
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Campo obrigatório';
                     return null;
@@ -39,9 +36,7 @@ class RegisterPage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 20),
                   child: TextFormField(
                     controller: _password,
-                    decoration: const InputDecoration(
-                      hintText: 'Senha',
-                    ),
+                    decoration: const InputDecoration(hintText: 'Senha'),
                     validator: (value) {
                       if (value == null || value.isEmpty) return 'Campo obrigatório';
                       return null;
@@ -57,7 +52,7 @@ class RegisterPage extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 10),
                           child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => const LoginPage())),
+                            onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginPage())),
                             style: ButtonStyle(
                               backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(221, 33, 149, 243)),
                               foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
@@ -70,22 +65,9 @@ class RegisterPage extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: ElevatedButton(
-                            onPressed: () async {
-                              try {
-                                if (!_formKey.currentState!.validate()) return;
-                                FocusScope.of(context).requestFocus(FocusNode());
-
-                                await Credentials(UserDatabase()).insertUser(User(_login.text, _password.text, false));
-
-                                if (context.mounted) {
-                                  await MessageUser.message(context, 'Cadastro realizado!!!');
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => const LoginPage()));
-                                }
-                              } catch (e) {
-                                // ignore: use_build_context_synchronously
-                                await MessageUser.message(context, 'Erro ao cadastrar!!!');
-                              }
+                            onPressed: () {
+                              _registerController.context = context;
+                              _registerController.register(_formKeyRegister, _email, _password);
                             },
                             style: ButtonStyle(
                               backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(221, 33, 149, 243)),
@@ -94,7 +76,7 @@ class RegisterPage extends StatelessWidget {
                             child: const Text('Registrar', style: TextStyle(fontSize: 18)),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

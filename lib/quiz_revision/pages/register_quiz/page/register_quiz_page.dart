@@ -62,19 +62,12 @@ class RegisterQuizPage extends StatelessWidget {
                   keyboardType: TextInputType.multiline,
                   textArea: true,
                 ),
-                TextFormFieldWidget(
-                  controller: question,
-                  maxLine: 5,
-                  hintText: 'Questão',
-                  keyboardType: TextInputType.multiline,
-                  textArea: true,
-                  valid: false,
-                ),
+                TextFormFieldWidget(controller: question, maxLine: 5, hintText: 'Questão', keyboardType: TextInputType.multiline, textArea: true, valid: false),
                 TextButtonWidget(
                   label: 'Adicionar questão',
-                  onClick: () async {
+                  onClick: () {
                     question.text.trim() == ''
-                        ? await MessageUser.message(context, 'Obrigatório ter uma questão.')
+                        ? MessageUser.alert(context, 'Obrigatório ter uma questão.')
                         : _tableQuestionNotifier.addQuestion(
                             Question(description: question.text)
                               ..setSync()
@@ -104,44 +97,42 @@ class RegisterQuizPage extends StatelessWidget {
         PersistentFooterWidget(
           children: [
             TextButtonWidget.cancel(() => Navigator.pop(context, false)),
-            TextButtonWidget.save(
-              () async {
-                try {
-                  if (!formKey.currentState!.validate()) return;
+            TextButtonWidget.save(() async {
+              try {
+                if (!formKey.currentState!.validate()) return;
 
-                  if (!_tableQuestionNotifier.listQuestionuestionIsEmpty(context)) return;
+                if (!_tableQuestionNotifier.listQuestionuestionIsEmpty(context)) return;
 
-                  if (!_tableQuestionNotifier.isAnwserByListQuestion(context)) return;
-                  FocusScope.of(context).requestFocus(FocusNode());
+                if (!_tableQuestionNotifier.isAnwserByListQuestion(context)) return;
+                FocusScope.of(context).requestFocus(FocusNode());
 
-                  registerQuiz.quiz?.setId(registerQuiz.quiz?.id);
-                  registerQuiz.quiz?.setTopic(topic.text);
-                  registerQuiz.quiz?.setDescription(description.text);
-                  registerQuiz.quiz?.setSync();
+                registerQuiz.quiz?.setId(registerQuiz.quiz?.id);
+                registerQuiz.quiz?.setTopic(topic.text);
+                registerQuiz.quiz?.setDescription(description.text);
+                registerQuiz.quiz?.setSync();
 
-                  if (registerQuiz.quiz?.id == null) registerQuiz.quiz?.setInsertApp(true);
+                if (registerQuiz.quiz?.id == null) registerQuiz.quiz?.setInsertApp(true);
 
-                  var result = await registerQuiz.writeQuiz();
+                var result = await registerQuiz.writeQuiz();
 
-                  if (result != null) {
-                    if (registerQuiz.quiz?.id != null) result = registerQuiz.quiz?.id;
-                    await _tableQuestionNotifier.updateIdQuiz(result!);
-                  }
-
-                  if (context.mounted && result != null) {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    await MessageUser.message(context, registerQuiz.message!.message);
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context, true);
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    await MessageUser.message(context, 'Erro ao registrar!!!, $e');
-                  }
+                if (result != null) {
+                  if (registerQuiz.quiz?.id != null) result = registerQuiz.quiz?.id;
+                  await _tableQuestionNotifier.updateIdQuiz(result!);
                 }
-              },
-            ),
+
+                if (context.mounted && result != null) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  MessageUser.success(context, registerQuiz.message!.message);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context, true);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  MessageUser.error(context, 'Erro ao registrar!!!, $e');
+                }
+              }
+            }),
           ],
         ),
       ],

@@ -4,7 +4,7 @@ class Month {
 
   Month(this.value, this.label);
 
-  static getLabelMonth(int index) {
+  static dynamic getLabelMonth(int index) {
     List<String> labelMonths = ['Jan.', 'Fev.', 'Mar.', 'Abr.', 'Mai.', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Out.', 'Nov.', 'Dez.'];
     return labelMonths[index];
   }

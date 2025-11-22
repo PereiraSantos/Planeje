@@ -1,9 +1,8 @@
 import 'package:planeje/credentials/entities/user.dart';
 
-abstract class UserRepository {
-  Future<void> register(String email, String password);
+abstract class UserDatabaseRepository {
+  Future<void> register(User user);
+  Future<User?> findByEmailAndPassword(String email, String password);
   Future<User?> findByEmail(String email);
-  Future<String> update(String token);
-
   Future<int?> tableUserContainsRegister();
 }

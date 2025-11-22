@@ -23,5 +23,5 @@ class UnderReviewNotifier with ChangeNotifier {
 
   int getIdDateRevision() => _idDateRevision;
 
-  update() => notifyListeners();
+  void update() => notifyListeners();
 }

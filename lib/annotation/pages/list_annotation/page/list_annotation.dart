@@ -48,16 +48,12 @@ class ListAnnotation extends StatelessWidget {
                             confirmDismiss: (DismissDirection direction) async {
                               if (direction == DismissDirection.startToEnd) {
                                 try {
-                                  return await DialogDelete().build(
-                                    context,
-                                    snapshot.data![index].text!,
-                                    <AnnotationRevision>() async {
-                                      return await DeleteAnnotation(AnnotationDatabase()).disableById(snapshot.data![index].id!);
-                                    },
-                                  );
+                                  return await DialogDelete().build(context, snapshot.data![index].text!, () async {
+                                    return await DeleteAnnotation(AnnotationDatabase()).disableById(snapshot.data![index].id!);
+                                  });
                                 } catch (e) {
                                   // ignore: use_build_context_synchronously
-                                  await MessageUser.message(context, 'Erro ao abrir dialogo');
+                                  MessageUser.error(context, 'Erro ao abrir dialogo');
                                 }
                               }
                               return null;
@@ -85,7 +81,7 @@ class ListAnnotation extends StatelessWidget {
                                     if (result) annotationNotifier.update();
                                   } catch (e) {
                                     // ignore: use_build_context_synchronously
-                                    await MessageUser.message(context, 'Erro na rota anotação');
+                                    MessageUser.error(context, 'Erro na rota anotação');
                                   }
                                 },
                                 child: Column(
@@ -96,10 +92,7 @@ class ListAnnotation extends StatelessWidget {
                                       child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          const TextList("Tema:", flex: 1),
-                                          TextList("${snapshot.data![index].description}", flex: 6, fontSize: 17),
-                                        ],
+                                        children: [const TextList("Tema:", flex: 1), TextList("${snapshot.data![index].description}", flex: 6, fontSize: 17)],
                                       ),
                                     ),
                                     Visibility(
@@ -108,12 +101,7 @@ class ListAnnotation extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          TextList(
-                                            "${snapshot.data![index].title}",
-                                            color: Colors.black54,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 17,
-                                          ),
+                                          TextList("${snapshot.data![index].title}", color: Colors.black54, fontWeight: FontWeight.w500, fontSize: 17),
                                         ],
                                       ),
                                     ),
@@ -121,11 +109,9 @@ class ListAnnotation extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        TextList(snapshot.data![index].text ?? ""),
-                                      ],
+                                      children: [TextList(snapshot.data![index].text ?? "")],
                                     ),
-                                    const Padding(padding: EdgeInsets.all(3))
+                                    const Padding(padding: EdgeInsets.all(3)),
                                   ],
                                 ),
                               ),
@@ -144,9 +130,7 @@ class ListAnnotation extends StatelessWidget {
                   );
                 }
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
             },
           ),

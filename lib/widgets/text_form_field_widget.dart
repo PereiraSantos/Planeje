@@ -43,10 +43,7 @@ class TextFormFieldWidget extends StatelessWidget {
   InputBorder theme(double value) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(value),
-      borderSide: const BorderSide(
-        color: Colors.black54,
-        width: 1,
-      ),
+      borderSide: const BorderSide(color: Colors.black54, width: 1),
     );
   }
 
@@ -67,17 +64,9 @@ class TextFormFieldWidget extends StatelessWidget {
         style: TextStyle(fontSize: fontSize!, color: Colors.black54),
         decoration: InputDecoration(
           labelText: hintText,
-          labelStyle: TextStyle(
-            color: Colors.black54,
-            fontSize: fontSize!,
-            fontWeight: FontWeight.w300,
-          ),
+          labelStyle: TextStyle(color: Colors.black54, fontSize: fontSize!, fontWeight: FontWeight.w300),
           suffixIcon: suffixIcon,
-          hintStyle: TextStyle(
-            color: Colors.black,
-            fontSize: fontSize!,
-            fontFamily: 'helvetica_neue_light',
-          ),
+          hintStyle: TextStyle(color: Colors.black, fontSize: fontSize!, fontFamily: 'helvetica_neue_light'),
           border: borderRadius != null ? theme(borderRadius!) : null,
           contentPadding: contentPadding,
         ),
@@ -94,7 +83,7 @@ class TextFormFieldWidget extends StatelessWidget {
     );
   }
 
-  String? validator(value) {
+  String? validator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Campo obrigatório!!!';
     }

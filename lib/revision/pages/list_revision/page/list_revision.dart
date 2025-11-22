@@ -44,7 +44,10 @@ class _ListRevisionState extends State<ListRevision> {
         ),
         elevation: 0,
         toolbarHeight: 46,
-        title: Text('Revisões ${widget.revisionTheme.description}', style: const TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold)),
+        title: Text(
+          'Revisões ${widget.revisionTheme.description}',
+          style: const TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold),
+        ),
         actions: [
           Search(
             setValue: (value) {
@@ -64,7 +67,7 @@ class _ListRevisionState extends State<ListRevision> {
 
               if (result) setState(() {});
             },
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -89,7 +92,7 @@ class _ListRevisionState extends State<ListRevision> {
                             return await DialogDelete.build(context, snapshot.data![index].revision);
                           } catch (e) {
                             // ignore: use_build_context_synchronously
-                            await MessageUser.message(context, 'Erro ao abrir dialogo');
+                            MessageUser.success(context, 'Erro ao abrir dialogo');
                           }
                         } else {
                           try {
@@ -113,7 +116,7 @@ class _ListRevisionState extends State<ListRevision> {
                             if (result) setState(() {});
                           } catch (e) {
                             // ignore: use_build_context_synchronously
-                            await MessageUser.message(context, 'Erro na rota revisão');
+                            MessageUser.error(context, 'Erro na rota revisão');
                           }
                         }
                         return null;
@@ -146,9 +149,7 @@ class _ListRevisionState extends State<ListRevision> {
                 );
               }
             } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),

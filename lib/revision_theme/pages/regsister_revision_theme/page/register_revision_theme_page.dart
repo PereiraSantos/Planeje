@@ -33,15 +33,7 @@ class RegisterRevisionThemePage extends StatelessWidget {
           child: Form(
             key: formKey,
             child: Column(
-              children: [
-                TextFormFieldWidget(
-                  controller: description,
-                  maxLine: 5,
-                  hintText: 'Tema',
-                  keyboardType: TextInputType.multiline,
-                  textArea: true,
-                ),
-              ],
+              children: [TextFormFieldWidget(controller: description, maxLine: 5, hintText: 'Tema', keyboardType: TextInputType.multiline, textArea: true)],
             ),
           ),
         ),
@@ -50,37 +42,35 @@ class RegisterRevisionThemePage extends StatelessWidget {
         PersistentFooterWidget(
           children: [
             TextButtonWidget.cancel(() => Navigator.pop(context, false)),
-            TextButtonWidget.save(
-              () async {
-                try {
-                  if (!formKey.currentState!.validate()) return;
+            TextButtonWidget.save(() async {
+              try {
+                if (!formKey.currentState!.validate()) return;
 
-                  revisionTheme.revisionTheme?.setId(revisionTheme.revisionTheme?.id);
+                revisionTheme.revisionTheme?.setId(revisionTheme.revisionTheme?.id);
 
-                  revisionTheme.revisionTheme?.setDescription(description.text);
+                revisionTheme.revisionTheme?.setDescription(description.text);
 
-                  revisionTheme.revisionTheme?.setSync();
+                revisionTheme.revisionTheme?.setSync();
 
-                  if (revisionTheme.revisionTheme?.id == null) revisionTheme.revisionTheme?.setInsertApp(true);
+                if (revisionTheme.revisionTheme?.id == null) revisionTheme.revisionTheme?.setInsertApp(true);
 
-                  var idRevision = await revisionTheme.write();
+                var idRevision = await revisionTheme.write();
 
-                  if (idRevision == null) return;
+                if (idRevision == null) return;
 
-                  if (idRevision != null && context.mounted) {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    await MessageUser.message(context, revisionTheme.message!.message);
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context, true);
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    await MessageUser.message(context, 'Erro ao registrar!!!, $e');
-                  }
+                if (idRevision != null && context.mounted) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  MessageUser.success(context, revisionTheme.message!.message);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context, true);
                 }
-              },
-            ),
+              } catch (e) {
+                if (context.mounted) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  MessageUser.error(context, 'Erro ao registrar!!!, $e');
+                }
+              }
+            }),
           ],
         ),
       ],

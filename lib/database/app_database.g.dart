@@ -90,6 +90,10 @@ class _$AppDatabase extends AppDatabase {
 
   RevisionThemeDao? _revisionThemeDaoInstance;
 
+  SessionDao? _sessionDaoInstance;
+
+  LastSessionDao? _lastSessionDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -124,11 +128,15 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `setting` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `keystone` TEXT, `value` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `user` (`id` INTEGER NOT NULL, `login` TEXT NOT NULL, `password` TEXT NOT NULL, `keep_logged` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `user` (`email` TEXT NOT NULL, `password` TEXT NOT NULL, PRIMARY KEY (`email`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `revision_quiz` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date_revision` TEXT, `answer` INTEGER, `id_quiz` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `revision_theme` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `session` (`id` INTEGER NOT NULL, `email_user` TEXT NOT NULL, `token` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `last_session` (`id` INTEGER NOT NULL, `email` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -182,6 +190,17 @@ class _$AppDatabase extends AppDatabase {
   RevisionThemeDao get revisionThemeDao {
     return _revisionThemeDaoInstance ??=
         _$RevisionThemeDao(database, changeListener);
+  }
+
+  @override
+  SessionDao get sessionDao {
+    return _sessionDaoInstance ??= _$SessionDao(database, changeListener);
+  }
+
+  @override
+  LastSessionDao get lastSessionDao {
+    return _lastSessionDaoInstance ??=
+        _$LastSessionDao(database, changeListener);
   }
 }
 
@@ -1176,10 +1195,8 @@ class _$UserDao extends UserDao {
             database,
             'user',
             (User item) => <String, Object?>{
-                  'id': item.id,
-                  'login': item.login,
-                  'password': item.password,
-                  'keep_logged': item.keepLogged ? 1 : 0
+                  'email': item.email,
+                  'password': item.password
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -1191,33 +1208,33 @@ class _$UserDao extends UserDao {
   final InsertionAdapter<User> _userInsertionAdapter;
 
   @override
-  Future<User?> findUserLoginPassword(
-    String login,
+  Future<User?> findByEmailAndPassword(
+    String email,
     String password,
   ) async {
     return _queryAdapter.query(
-        'select * from user where login = ?1 and password = ?2',
-        mapper: (Map<String, Object?> row) => User(row['login'] as String,
-            row['password'] as String, (row['keep_logged'] as int) != 0),
-        arguments: [login, password]);
+        'select * from user where email = ?1 and password = ?2',
+        mapper: (Map<String, Object?> row) =>
+            User(row['email'] as String, row['password'] as String),
+        arguments: [email, password]);
   }
 
   @override
-  Future<User?> findUserById() async {
-    return _queryAdapter.query('select * from user where id = 1',
-        mapper: (Map<String, Object?> row) => User(row['login'] as String,
-            row['password'] as String, (row['keep_logged'] as int) != 0));
+  Future<User?> findByEmail(String email) async {
+    return _queryAdapter.query('select * from user where email = ?1',
+        mapper: (Map<String, Object?> row) =>
+            User(row['email'] as String, row['password'] as String),
+        arguments: [email]);
   }
 
   @override
-  Future<int?> updateKeepLogged(bool keepLogged) async {
-    return _queryAdapter.query('update user set keep_logged = ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as int,
-        arguments: [keepLogged ? 1 : 0]);
+  Future<int?> tableUserContainsRegister() async {
+    return _queryAdapter.query('select count(email) from user',
+        mapper: (Map<String, Object?> row) => row.values.first as int);
   }
 
   @override
-  Future<void> insertUser(User user) async {
+  Future<void> register(User user) async {
     await _userInsertionAdapter.insert(user, OnConflictStrategy.abort);
   }
 }
@@ -1570,5 +1587,93 @@ class _$RevisionThemeDao extends RevisionThemeDao {
   Future<int> updateRevisionThemeList(List<RevisionTheme> revisionThemes) {
     return _revisionThemeUpdateAdapter.updateListAndReturnChangedRows(
         revisionThemes, OnConflictStrategy.abort);
+  }
+}
+
+class _$SessionDao extends SessionDao {
+  _$SessionDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _sessionInsertionAdapter = InsertionAdapter(
+            database,
+            'session',
+            (Session item) => <String, Object?>{
+                  'id': item.id,
+                  'email_user': item.emailUser,
+                  'token': item.token
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Session> _sessionInsertionAdapter;
+
+  @override
+  Future<void> delete() async {
+    await _queryAdapter.queryNoReturn('delete from session');
+  }
+
+  @override
+  Future<Session?> findSession() async {
+    return _queryAdapter.query('select * from session',
+        mapper: (Map<String, Object?> row) =>
+            Session(row['email_user'] as String, row['token'] as String));
+  }
+
+  @override
+  Future<int> register(Session session) {
+    return _sessionInsertionAdapter.insertAndReturnId(
+        session, OnConflictStrategy.abort);
+  }
+}
+
+class _$LastSessionDao extends LastSessionDao {
+  _$LastSessionDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _lastSessionInsertionAdapter = InsertionAdapter(
+            database,
+            'last_session',
+            (LastSession item) =>
+                <String, Object?>{'id': item.id, 'email': item.email}),
+        _lastSessionUpdateAdapter = UpdateAdapter(
+            database,
+            'last_session',
+            ['id'],
+            (LastSession item) =>
+                <String, Object?>{'id': item.id, 'email': item.email});
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<LastSession> _lastSessionInsertionAdapter;
+
+  final UpdateAdapter<LastSession> _lastSessionUpdateAdapter;
+
+  @override
+  Future<LastSession?> findLastSession() async {
+    return _queryAdapter.query('select * from last_session',
+        mapper: (Map<String, Object?> row) =>
+            LastSession(row['email'] as String));
+  }
+
+  @override
+  Future<void> register(LastSession lastSession) async {
+    await _lastSessionInsertionAdapter.insert(
+        lastSession, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> update(LastSession lastSession) async {
+    await _lastSessionUpdateAdapter.update(
+        lastSession, OnConflictStrategy.abort);
   }
 }

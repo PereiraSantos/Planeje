@@ -60,20 +60,8 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextFormFieldWidget(
-                  controller: title,
-                  maxLine: 1,
-                  hintText: 'Título',
-                  keyboardType: TextInputType.text,
-                  textArea: false,
-                ),
-                TextFormFieldWidget(
-                  controller: description,
-                  maxLine: 5,
-                  hintText: 'Descrição',
-                  keyboardType: TextInputType.multiline,
-                  textArea: true,
-                ),
+                TextFormFieldWidget(controller: title, maxLine: 1, hintText: 'Título', keyboardType: TextInputType.text, textArea: false),
+                TextFormFieldWidget(controller: description, maxLine: 5, hintText: 'Descrição', keyboardType: TextInputType.multiline, textArea: true),
                 TextButton(
                   onPressed: () async {
                     await DialogAnnotation().build(context, <AnnotationRevision>(String title, String description) async {
@@ -121,18 +109,21 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                           child: SizedBox(
                             height: 35,
                             child: IconButton(
-                                onPressed: () async {
-                                  await DialogAnnotation().build(
-                                      titleArg: widget.annotations![index].title,
-                                      descriptionArg: widget.annotations![index].text ?? '',
-                                      context, <AnnotationRevision>(String title, String description) async {
+                              onPressed: () async {
+                                await DialogAnnotation().build(
+                                  titleArg: widget.annotations![index].title,
+                                  descriptionArg: widget.annotations![index].text ?? '',
+                                  context,
+                                  <AnnotationRevision>(String title, String description) async {
                                     widget.annotations![index].title = title;
                                     widget.annotations![index].text = description;
 
                                     setState(() {});
-                                  });
-                                },
-                                icon: const Icon(Icons.edit, size: 18, color: Colors.blue)),
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.edit, size: 18, color: Colors.blue),
+                            ),
                           ),
                         ),
                         Expanded(
@@ -140,25 +131,26 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                           child: SizedBox(
                             height: 35,
                             child: IconButton(
-                                onPressed: () async {
-                                  if (widget.annotations![index].id != null) {
-                                    await DeleteAnnotation(AnnotationDatabase()).disableById(widget.annotations![index].id!);
-                                  }
+                              onPressed: () async {
+                                if (widget.annotations![index].id != null) {
+                                  await DeleteAnnotation(AnnotationDatabase()).disableById(widget.annotations![index].id!);
+                                }
 
-                                  setState(() {
-                                    FocusScope.of(context).requestFocus(FocusNode());
-                                    widget.annotations!.removeAt(index);
-                                    MessageUser.message(context, 'Deletado com sucesso!!!');
-                                  });
-                                },
-                                icon: const Icon(Icons.delete, size: 18, color: Colors.red)),
+                                setState(() {
+                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  widget.annotations!.removeAt(index);
+                                  MessageUser.success(context, 'Deletado com sucesso!!!');
+                                });
+                              },
+                              icon: const Icon(Icons.delete, size: 18, color: Colors.red),
+                            ),
                           ),
-                        )
+                        ),
                       ],
                     );
                   },
                 ),
-                const Padding(padding: EdgeInsets.all(50))
+                const Padding(padding: EdgeInsets.all(50)),
               ],
             ),
           ),
@@ -168,66 +160,65 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
         PersistentFooterWidget(
           children: [
             TextButtonWidget.cancel(() => Navigator.pop(context, false)),
-            TextButtonWidget.save(
-              () async {
-                try {
-                  if (!formKey.currentState!.validate()) return;
+            TextButtonWidget.save(() async {
+              try {
+                if (!formKey.currentState!.validate()) return;
 
-                  widget.revision.revision?.setId(widget.revision.revision?.id);
+                widget.revision.revision?.setId(widget.revision.revision?.id);
 
-                  widget.revision.revision?.setTitle(title.text);
-                  widget.revision.revision?.setDescription(description.text);
-                  widget.revision.revision?.setDateCreational(widget.revision.revision?.dateCreational);
-                  widget.revision.revision?.setSync();
-                  widget.revision.revision?.setIdTevisionTheme(widget.id);
-                  if (widget.revision.revision?.id == null) widget.revision.revision?.setInsertApp(true);
+                widget.revision.revision?.setTitle(title.text);
+                widget.revision.revision?.setDescription(description.text);
+                widget.revision.revision?.setDateCreational(widget.revision.revision?.dateCreational);
+                widget.revision.revision?.setSync();
+                widget.revision.revision?.setIdTevisionTheme(widget.id);
+                if (widget.revision.revision?.id == null) widget.revision.revision?.setInsertApp(true);
 
-                  var idRevision = await widget.revision.write();
+                var idRevision = await widget.revision.write();
 
-                  if (idRevision == null) return;
+                if (idRevision == null) return;
 
-                  for (Annotation annotation in widget.annotations!) {
-                    if (annotation.id != null && annotation.id! < 0) {
-                      registerAnnotation.annotation?.setId(null);
-                      annotation.id = null;
-                      registerAnnotation.annotation?.setInsertApp(true);
-                    }
-
-                    registerAnnotation.annotation?.setTitle(annotation.title ?? '');
-                    registerAnnotation.annotation?.setText(annotation.text ?? '');
-
-                    registerAnnotation.annotation?.setIdRevision(widget.revision.revision?.id ?? idRevision);
-                    registerAnnotation.annotation?.setDateText(null);
-                    registerAnnotation.annotation?.setSync();
-
-                    annotation.id == null
-                        ? await registerAnnotation.write()
-                        : await UpdateAnnotation(AnnotationDatabase(),
-                                annotation: Annotation(
-                                  id: annotation.id,
-                                  idRevision: annotation.idRevision,
-                                  title: annotation.title,
-                                  text: annotation.text,
-                                  dateText: annotation.dateText,
-                                )..setSync(),
-                                message: StatusNotification())
-                            .write();
+                for (Annotation annotation in widget.annotations!) {
+                  if (annotation.id != null && annotation.id! < 0) {
+                    registerAnnotation.annotation?.setId(null);
+                    annotation.id = null;
+                    registerAnnotation.annotation?.setInsertApp(true);
                   }
 
-                  if (idRevision != null && context.mounted) {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    await MessageUser.message(context, widget.revision.message!.message);
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context, true);
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    await MessageUser.message(context, 'Erro ao registrar!!!, $e');
-                  }
+                  registerAnnotation.annotation?.setTitle(annotation.title ?? '');
+                  registerAnnotation.annotation?.setText(annotation.text ?? '');
+
+                  registerAnnotation.annotation?.setIdRevision(widget.revision.revision?.id ?? idRevision);
+                  registerAnnotation.annotation?.setDateText(null);
+                  registerAnnotation.annotation?.setSync();
+
+                  annotation.id == null
+                      ? await registerAnnotation.write()
+                      : await UpdateAnnotation(
+                          AnnotationDatabase(),
+                          annotation: Annotation(
+                            id: annotation.id,
+                            idRevision: annotation.idRevision,
+                            title: annotation.title,
+                            text: annotation.text,
+                            dateText: annotation.dateText,
+                          )..setSync(),
+                          message: StatusNotification(),
+                        ).write();
                 }
-              },
-            ),
+
+                if (idRevision != null && context.mounted) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  MessageUser.success(context, widget.revision.message!.message);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context, true);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  MessageUser.error(context, 'Erro ao registrar!!!, $e');
+                }
+              }
+            }),
           ],
         ),
       ],

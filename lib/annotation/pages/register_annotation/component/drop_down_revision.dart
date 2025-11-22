@@ -28,7 +28,7 @@ class DropDownButtonRevision extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 20),
               child: DropdownButtonFormField<int>(
                 hint: const Text("Tema", style: TextStyle(fontSize: 17, color: Colors.grey)),
-                value: dropdownValue,
+                initialValue: dropdownValue,
                 icon: const Icon(Icons.expand_more),
                 elevation: 14,
                 isExpanded: true,

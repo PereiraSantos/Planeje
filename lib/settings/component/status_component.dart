@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-abstract class StatusFactory<StatelessWidget> {
+abstract class StatusFactory {
   Widget build(BuildContext context);
 }
 

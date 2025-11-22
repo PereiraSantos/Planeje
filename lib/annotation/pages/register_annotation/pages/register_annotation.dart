@@ -54,11 +54,7 @@ class RegisterAnnotation extends StatelessWidget {
                     style: const TextStyle(fontSize: 18, color: Colors.black54),
                     decoration: InputDecoration(
                       labelText: 'Título',
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 18,
-                        fontFamily: 'helvetica_neue_light',
-                      ),
+                      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 18, fontFamily: 'helvetica_neue_light'),
                     ),
                   ),
                 ),
@@ -71,11 +67,7 @@ class RegisterAnnotation extends StatelessWidget {
                     style: const TextStyle(fontSize: 20, color: Colors.black54),
                     decoration: InputDecoration(
                       labelText: 'Descrição',
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 20.0,
-                        fontFamily: 'helvetica_neue_light',
-                      ),
+                      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 20.0, fontFamily: 'helvetica_neue_light'),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -94,28 +86,26 @@ class RegisterAnnotation extends StatelessWidget {
         PersistentFooterWidget(
           children: [
             TextButtonWidget.cancel(() => Navigator.pop(context, false)),
-            TextButtonWidget.save(
-              () async {
-                try {
-                  if (!formKey.currentState!.validate()) return;
+            TextButtonWidget.save(() async {
+              try {
+                if (!formKey.currentState!.validate()) return;
 
-                  registerAnnotation.annotation!.setTitle(title.text);
-                  registerAnnotation.annotation!.setText(description.text);
-                  registerAnnotation.annotation!.setDateText(registerAnnotation.annotation!.dateText);
+                registerAnnotation.annotation!.setTitle(title.text);
+                registerAnnotation.annotation!.setText(description.text);
+                registerAnnotation.annotation!.setDateText(registerAnnotation.annotation!.dateText);
 
-                  await registerAnnotation.write();
+                await registerAnnotation.write();
 
-                  if (context.mounted) {
-                    await MessageUser.message(context, registerAnnotation.message!.message);
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context, true);
-                  }
-                } catch (e) {
+                if (context.mounted) {
+                  MessageUser.success(context, registerAnnotation.message!.message);
                   // ignore: use_build_context_synchronously
-                  await MessageUser.message(context, 'Erro ao registrar anotação');
+                  Navigator.pop(context, true);
                 }
-              },
-            ),
+              } catch (e) {
+                // ignore: use_build_context_synchronously
+                MessageUser.error(context, 'Erro ao registrar anotação');
+              }
+            }),
           ],
         ),
       ],
