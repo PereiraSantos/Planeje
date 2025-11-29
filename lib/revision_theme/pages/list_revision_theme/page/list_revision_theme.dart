@@ -53,7 +53,10 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
         backgroundColor: const Color(0xffffffff),
         elevation: 0,
         toolbarHeight: 46,
-        title: const Text('Revisão', style: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Revisão',
+          style: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold),
+        ),
         actions: [
           Search(
             setValue: (value) {
@@ -72,7 +75,7 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
 
               if (result) setState(() {});
             },
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -97,19 +100,26 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                             return await DialogDelete.build(context, snapshot.data![index]);
                           } catch (e) {
                             // ignore: use_build_context_synchronously
-                            await MessageUser.message(context, 'Erro ao abrir dialogo');
+                            MessageUser.success(context, 'Erro ao abrir dialogo');
                           }
                         } else {
                           try {
                             // ignore: use_build_context_synchronously
-                            var result = await Navigator.of(context).push(TransitionsBuilder.createRoute(RegisterRevisionThemePage(
-                              revisionTheme: UpdateRevisionTheme(RevisionThemeDatabase(),
-                                  revisionTheme: snapshot.data![index], message: StatusNotification(TypeMessage.Atualizar)),
-                            )));
+                            var result = await Navigator.of(context).push(
+                              TransitionsBuilder.createRoute(
+                                RegisterRevisionThemePage(
+                                  revisionTheme: UpdateRevisionTheme(
+                                    RevisionThemeDatabase(),
+                                    revisionTheme: snapshot.data![index],
+                                    message: StatusNotification(TypeMessage.Atualizar),
+                                  ),
+                                ),
+                              ),
+                            );
                             if (result) setState(() {});
                           } catch (e) {
                             // ignore: use_build_context_synchronously
-                            await MessageUser.message(context, 'Erro na rota revisão');
+                            MessageUser.error(context, 'Erro na rota revisão');
                           }
                         }
                         return null;
@@ -133,23 +143,27 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                               children: [
                                 Expanded(
                                   flex: 10,
-                                  child: Text(snapshot.data![index].description ?? '',
-                                      style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0))),
+                                  child: Text(
+                                    snapshot.data![index].description ?? '',
+                                    style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
+                                  ),
                                 ),
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () async {
-                                      await Navigator.of(context).push(
-                                        TransitionsBuilder.createRoute(ListRevision(revisionTheme: snapshot.data![index])),
-                                      );
+                                      await Navigator.of(context).push(TransitionsBuilder.createRoute(ListRevision(revisionTheme: snapshot.data![index])));
                                     },
                                     child: const Icon(Icons.menu_book_rounded, size: 20, color: Colors.black45),
                                   ),
                                 ),
                               ],
                             ),
-                            Text(_validTitleDescriptuionIsNull(snapshot.data![index].title, snapshot.data![index].revisionDescription),
-                                style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300), overflow: TextOverflow.ellipsis, maxLines: 2),
+                            Text(
+                              _validTitleDescriptuionIsNull(snapshot.data![index].title, snapshot.data![index].revisionDescription),
+                              style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
                             Visibility(
                               visible: snapshot.data![index].dateRevision != null,
                               child: Text(
@@ -172,9 +186,7 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                 );
               }
             } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DialogAnnotation {
-  build<T>(BuildContext context, Function(String title, String description) onPressed, {String? titleArg, String? descriptionArg}) async {
+  dynamic build<T>(BuildContext context, Function(String title, String description) onPressed, {String? titleArg, String? descriptionArg}) async {
     final formKey = GlobalKey<FormState>();
     final TextEditingController description = TextEditingController(text: descriptionArg);
     final TextEditingController title = TextEditingController(text: titleArg);
@@ -28,11 +28,7 @@ class DialogAnnotation {
                     style: const TextStyle(fontSize: 18, color: Colors.black54),
                     decoration: InputDecoration(
                       labelText: 'Título',
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 18,
-                        fontFamily: 'helvetica_neue_light',
-                      ),
+                      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 18, fontFamily: 'helvetica_neue_light'),
                     ),
                   ),
                 ),
@@ -45,11 +41,7 @@ class DialogAnnotation {
                     style: const TextStyle(fontSize: 20, color: Colors.black54),
                     decoration: InputDecoration(
                       labelText: 'Descrição',
-                      hintStyle: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 20.0,
-                        fontFamily: 'helvetica_neue_light',
-                      ),
+                      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 20.0, fontFamily: 'helvetica_neue_light'),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -72,12 +64,8 @@ class DialogAnnotation {
                     onPressed: () => Navigator.of(context).pop(false),
                     style: ButtonStyle(
                       foregroundColor: WidgetStateProperty.all(const Color.fromARGB(80, 0, 0, 0)),
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(vertical: 6, horizontal: 30),
-                      ),
-                      textStyle: WidgetStateProperty.all(
-                        const TextStyle(fontSize: 18),
-                      ),
+                      padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 6, horizontal: 30)),
+                      textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 18)),
                     ),
                     child: const Text("CANCELA"),
                   ),
@@ -89,12 +77,8 @@ class DialogAnnotation {
                     },
                     style: ButtonStyle(
                       foregroundColor: WidgetStateProperty.all(const Color.fromARGB(80, 0, 0, 0)),
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(vertical: 6, horizontal: 30),
-                      ),
-                      textStyle: WidgetStateProperty.all(
-                        const TextStyle(fontSize: 18),
-                      ),
+                      padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 6, horizontal: 30)),
+                      textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 18)),
                     ),
                     child: const Text("SALVAR"),
                   ),

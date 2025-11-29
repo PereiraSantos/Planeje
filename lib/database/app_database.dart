@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:floor/floor.dart';
 import 'package:planeje/annotation/datasource/dao/annotation_dao.dart';
-import 'package:planeje/login/datasource/dao/user_dao.dart';
-import 'package:planeje/login/entities/user.dart';
+import 'package:planeje/credentials/datasources/dao/last_session_dao.dart';
+import 'package:planeje/credentials/datasources/dao/session_dao.dart';
+import 'package:planeje/credentials/datasources/dao/user_dao.dart';
+import 'package:planeje/credentials/entities/last_session.dart';
+import 'package:planeje/credentials/entities/session.dart';
+import 'package:planeje/credentials/entities/user.dart';
 import 'package:planeje/quiz_revision/datasource/dao/question_dao.dart';
 import 'package:planeje/quiz_revision/datasource/dao/quiz_dao.dart';
 import 'package:planeje/quiz_revision/datasource/dao/revision_quiz_dao.dart';
@@ -59,6 +63,8 @@ final migration2to3 = Migration(2, 3, (database) async {
   User,
   RevisionQuiz,
   RevisionTheme,
+  Session,
+  LastSession,
 ])
 abstract class AppDatabase extends FloorDatabase {
   RevisionDao get revisionDao;
@@ -70,6 +76,8 @@ abstract class AppDatabase extends FloorDatabase {
   UserDao get userDao;
   RevisionQuizDao get revisionQuizDao;
   RevisionThemeDao get revisionThemeDao;
+  SessionDao get sessionDao;
+  LastSessionDao get lastSessionDao;
 }
 /*
 Future<AppDatabase> migrationDatabase() async {

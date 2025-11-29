@@ -52,7 +52,7 @@ class BuildDataGraphic {
     return year;
   }
 
-  _buldGraphic(Year year) {
+  List<GraphicData> _buldGraphic(Year year) {
     List<GraphicData> graphics = [];
     for (var i = 0; i < 12; i++) {
       graphics.add(GraphicData(year.months[i].label, year.months[i].value));

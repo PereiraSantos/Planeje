@@ -18,7 +18,7 @@ class ChartWidget extends StatelessWidget {
         child: SfCartesianChart(
           title: ChartTitle(text: title, textStyle: const TextStyle(color: Colors.black54, fontWeight: FontWeight.w700, fontSize: 13)),
           margin: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-          primaryXAxis: CategoryAxis(),
+          primaryXAxis: const CategoryAxis(),
           series: <CartesianSeries>[
             LineSeries<GraphicData, String>(
               dataSource: otherData ?? [],

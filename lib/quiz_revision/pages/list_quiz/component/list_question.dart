@@ -6,10 +6,7 @@ import '../controller/list_question_controller.dart';
 
 // ignore: must_be_immutable
 class ListQuestion extends StatefulWidget {
-  const ListQuestion({
-    super.key,
-    required this.listQuestion,
-  });
+  const ListQuestion({super.key, required this.listQuestion});
 
   final List<Question> listQuestion;
 
@@ -70,7 +67,7 @@ class _ListQuestionState extends State<ListQuestion> {
               GestureDetector(
                 onTap: () async {
                   if (listQuestionController.index == -1) {
-                    MessageUser.message(context, 'Necessário escolher um registro!!!');
+                    MessageUser.success(context, 'Necessário escolher um registro!!!');
                     return;
                   }
                   listQuestionController.showAnswer = true;
@@ -97,18 +94,12 @@ class _ListQuestionState extends State<ListQuestion> {
                   visible: listQuestionController.isAnswer(widget.listQuestion, false),
                   child: const Align(
                     alignment: Alignment.centerRight,
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
+                    child: Icon(Icons.close, color: Colors.red),
                   ),
                 ),
                 child: const Align(
                   alignment: Alignment.centerRight,
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.green,
-                  ),
+                  child: Icon(Icons.check, color: Colors.green),
                 ),
               ),
             ],

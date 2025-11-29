@@ -1,10 +1,26 @@
+import 'package:floor/floor.dart';
 import 'package:planeje/credentials/entities/user.dart';
 
+@Entity(tableName: 'session')
 class Session {
-  String id;
-  User user;
-  DateTime expiresAt;
+  @PrimaryKey(autoGenerate: false)
+  @ColumnInfo(name: 'id')
+  int id = 1;
+
+  @ColumnInfo(name: 'email_user')
+  String emailUser;
+
+  @ColumnInfo(name: 'token')
+  String token;
+
+  @ignore
+  User? user;
+
+  @ignore
+  DateTime? expiresAt;
+
+  @ignore
   bool? isValid;
 
-  Session(this.id, this.user, this.expiresAt, [this.isValid = true]);
+  Session(this.emailUser, this.token, {this.isValid = true, this.user, this.expiresAt});
 }

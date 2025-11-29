@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.1.26+41
 
 environment:
-  sdk: ^3.5.4
+  sdk: ^3.9.2
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,13 +34,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   intl: ^0.20.2
   floor: ^1.5.0
-  flutter_localization: ^0.3.0
+  flutter_localization: ^0.3.3
   flutter_localizations:
     sdk: flutter
-  shared_preferences: ^2.3.5
-  syncfusion_flutter_charts: ^31.2.3
-  dio: ^5.8.0+1
-  another_flushbar: ^1.12.30
+  shared_preferences: ^2.5.3
+  syncfusion_flutter_charts: ^31.2.5
+  dio: ^5.9.0
 
 
 dev_dependencies:
@@ -48,7 +47,7 @@ dev_dependencies:
     sdk: flutter
 
 
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   floor_generator: ^1.5.0
   build_runner: ^2.4.13
   flutter_launcher_icons: ^0.14.4

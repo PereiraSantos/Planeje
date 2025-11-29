@@ -1,17 +1,17 @@
 import 'package:floor/floor.dart';
-import 'package:planeje/login/entities/user.dart';
+import 'package:planeje/credentials/entities/user.dart';
 
 @dao
 abstract class UserDao {
-  @insert
-  Future<void> insertUser(User user);
+  @Insert()
+  Future<void> register(User user);
 
-  @Query('select * from user where login = :login and password = :password')
-  Future<User?> findUserLoginPassword(String login, String password);
+  @Query('select * from user where email = :email and password = :password')
+  Future<User?> findByEmailAndPassword(String email, String password);
 
-  @Query('select * from user where id = 1')
-  Future<User?> findUserById();
+  @Query('select * from user where email = :email')
+  Future<User?> findByEmail(String email);
 
-  @Query('update user set keep_logged = :keepLogged')
-  Future<int?> updateKeepLogged(bool keepLogged);
+  @Query('select count(email) from user')
+  Future<int?> tableUserContainsRegister();
 }

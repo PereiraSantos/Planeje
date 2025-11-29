@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:planeje/login/datasource/database/user_database.dart';
-import 'package:planeje/login/entities/user.dart';
-import 'package:planeje/login/pages/login_page.dart';
-import 'package:planeje/login/utils/credentials.dart';
+import 'package:planeje/credentials/page/login/login_page.dart';
+import 'package:planeje/credentials/usercases/session_manager.dart';
 
 import 'package:planeje/settings/utils/sync.dart';
 import 'package:planeje/utils/message_user.dart';
@@ -47,34 +45,20 @@ class SettingPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 25.0, right: 20.0, top: 5.0),
-                      child: Text('Enviar dados'),
-                    ),
-                    ListenableBuilder(
-                      listenable: sync.syncNotifierPost,
-                      builder: (context, child) => sync.syncNotifierPost.status.build(context),
-                    ),
+                    const Padding(padding: EdgeInsets.only(left: 25.0, right: 20.0, top: 5.0), child: Text('Enviar dados')),
+                    ListenableBuilder(listenable: sync.syncNotifierPost, builder: (context, child) => sync.syncNotifierPost.status.build(context)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 25.0, right: 20.0, top: 5.0),
-                      child: Text('Receber dados'),
-                    ),
-                    ListenableBuilder(
-                      listenable: sync.syncNotifierGet,
-                      builder: (context, child) => sync.syncNotifierGet.status.build(context),
-                    ),
+                    const Padding(padding: EdgeInsets.only(left: 25.0, right: 20.0, top: 5.0), child: Text('Receber dados')),
+                    ListenableBuilder(listenable: sync.syncNotifierGet, builder: (context, child) => sync.syncNotifierGet.status.build(context)),
                   ],
                 ),
                 GestureDetector(
                   onTap: () async {
-                    await Navigator.of(context).push(
-                      TransitionsBuilder.createRoute(const PrivacyPolicy()),
-                    );
+                    await Navigator.of(context).push(TransitionsBuilder.createRoute(const PrivacyPolicy()));
                   },
                   child: Container(
                     padding: const EdgeInsets.only(left: 25, right: 10, top: 15),
@@ -85,11 +69,7 @@ class SettingPage extends StatelessWidget {
                           'Privacidade de dados',
                           style: TextStyle(fontWeight: FontWeight.w300, color: Colors.black),
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 18,
-                          color: Colors.grey,
-                        )
+                        Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
                       ],
                     ),
                   ),
@@ -110,26 +90,18 @@ class SettingPage extends StatelessWidget {
 
                 await sync.receiveData();
 
-                if (context.mounted) await MessageUser.message(context, 'Sincronização finalizada!!!');
+                if (context.mounted) MessageUser.success(context, 'Sincronização finalizada!!!');
               } catch (e) {
-                if (context.mounted) await MessageUser.message(context, 'Erro ao sincronização!!!');
+                if (context.mounted) MessageUser.error(context, 'Erro ao sincronização!!!');
               }
             }),
             TextButtonWidget(
               label: 'DESLOGAR',
               onClick: () async {
-                User? user = await Credentials(UserDatabase()).findUserById();
+                await SessionManager().logout();
 
                 // ignore: use_build_context_synchronously
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage(
-                      login: user?.login,
-                      password: user?.password,
-                      keepMeLoggedIn: user?.keepLogged,
-                    ),
-                  ),
-                );
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
               },
             ),
           ],
