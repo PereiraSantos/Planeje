@@ -53,7 +53,7 @@ class ListAnnotation extends StatelessWidget {
                                   });
                                 } catch (e) {
                                   // ignore: use_build_context_synchronously
-                                  MessageUser.error(context, 'Erro ao abrir dialogo');
+                                  MessageUser.error('Erro ao abrir dialogo');
                                 }
                               }
                               return null;
@@ -81,7 +81,7 @@ class ListAnnotation extends StatelessWidget {
                                     if (result) annotationNotifier.update();
                                   } catch (e) {
                                     // ignore: use_build_context_synchronously
-                                    MessageUser.error(context, 'Erro na rota anotação');
+                                    MessageUser.error('Erro na rota anotação');
                                   }
                                 },
                                 child: Column(

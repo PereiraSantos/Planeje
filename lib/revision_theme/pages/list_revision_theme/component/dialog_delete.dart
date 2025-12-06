@@ -28,7 +28,7 @@ class DialogDelete {
 
                       if (list.isNotEmpty) {
                         // ignore: use_build_context_synchronously
-                        MessageUser.success(context, 'Não é possível remover tem revisão vinculada!!!!');
+                        MessageUser.success('Não é possível remover tem revisão vinculada!!!!');
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context, false);
                         return;
@@ -37,7 +37,7 @@ class DialogDelete {
                       var result = await DeleteRevisionTheme(RevisionThemeDatabase()).disableById(revisionTheme.id!);
 
                       if (result != null && context.mounted) {
-                        MessageUser.success(context, 'Removido com sucesso');
+                        MessageUser.success('Removido com sucesso');
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context, true);
                       }

@@ -1,38 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MessageUser {
-  static void success(BuildContext context, String message) async => _message(context, message, 'Sucesso', Colors.green);
+  static void success(String message) async => _message(message, 'Sucesso', Colors.green, Icons.check_circle_outline, Colors.white);
 
-  static void alert(BuildContext context, String message) async => _message(context, message, 'Alerta', Colors.yellow, Colors.black);
+  static void alert(String message) async => _message(message, 'Alerta', Colors.yellow, Icons.error_outline, Colors.black);
 
-  static void error(BuildContext context, String message) async => _message(context, message, 'Erro', Colors.red);
+  static void error(String message) async => _message(message, 'Erro', Colors.red, Icons.warning_amber_rounded, Colors.white);
 
-  static void _message(BuildContext context, String message, String title, Color backgroundColor, [Color? color]) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        padding: EdgeInsets.all(0),
-        dismissDirection: DismissDirection.up,
-        duration: const Duration(seconds: 3),
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          side: BorderSide(color: Colors.grey, width: 0.8),
-        ),
-
-        margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height - 100, left: 10, right: 10),
-        behavior: SnackBarBehavior.floating,
-        elevation: 4,
-        content: Container(
-          color: backgroundColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(fontSize: 20, color: color ?? Colors.white)),
-              Text('Login incorreto!!!', style: TextStyle(fontSize: 20, color: color ?? Colors.white)),
-            ],
-          ),
-        ),
-      ),
+  static void _message(String message, String title, Color backgroundColor, IconData icon, Color color) {
+    Get.snackbar(
+      title,
+      message,
+      colorText: color,
+      icon: Icon(icon, color: color),
+      shouldIconPulse: true,
+      barBlur: 20,
+      isDismissible: true,
+      backgroundColor: backgroundColor,
+      duration: Duration(seconds: Duration(milliseconds: 3).inMilliseconds),
     );
   }
 }

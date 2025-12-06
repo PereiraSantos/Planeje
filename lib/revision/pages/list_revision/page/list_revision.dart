@@ -91,8 +91,7 @@ class _ListRevisionState extends State<ListRevision> {
                           try {
                             return await DialogDelete.build(context, snapshot.data![index].revision);
                           } catch (e) {
-                            // ignore: use_build_context_synchronously
-                            MessageUser.success(context, 'Erro ao abrir dialogo');
+                            MessageUser.success('Erro ao abrir dialogo');
                           }
                         } else {
                           try {
@@ -115,8 +114,7 @@ class _ListRevisionState extends State<ListRevision> {
                             );
                             if (result) setState(() {});
                           } catch (e) {
-                            // ignore: use_build_context_synchronously
-                            MessageUser.error(context, 'Erro na rota revisão');
+                            MessageUser.error('Erro na rota revisão');
                           }
                         }
                         return null;

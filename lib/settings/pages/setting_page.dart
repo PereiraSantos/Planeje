@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planeje/backup/page/backup_page.dart';
 import 'package:planeje/credentials/page/login/login_page.dart';
 import 'package:planeje/credentials/usercases/session_manager.dart';
 
@@ -74,6 +75,24 @@ class SettingPage extends StatelessWidget {
                     ),
                   ),
                 ),
+                GestureDetector(
+                  onTap: () async {
+                    await Navigator.of(context).push(TransitionsBuilder.createRoute(BackupPage()));
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 25, right: 10, top: 15),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Backup',
+                          style: TextStyle(fontWeight: FontWeight.w300, color: Colors.black),
+                        ),
+                        Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -90,9 +109,9 @@ class SettingPage extends StatelessWidget {
 
                 await sync.receiveData();
 
-                if (context.mounted) MessageUser.success(context, 'Sincronização finalizada!!!');
+                if (context.mounted) MessageUser.success('Sincronização finalizada!!!');
               } catch (e) {
-                if (context.mounted) MessageUser.error(context, 'Erro ao sincronização!!!');
+                if (context.mounted) MessageUser.error('Erro ao sincronização!!!');
               }
             }),
             TextButtonWidget(

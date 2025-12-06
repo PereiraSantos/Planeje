@@ -37,10 +37,10 @@ class RegisterController {
 
   void _closeKeyboard() => FocusScope.of(_context).requestFocus(FocusNode());
 
-  void _messageError() => MessageUser.error(_context, 'Erro ao cadastrar!!!');
+  void _messageError() => MessageUser.error('Erro ao cadastrar!!!');
 
   void _goTo() {
-    MessageUser.success(_context, 'Cadastro realizado!!!');
+    MessageUser.success('Cadastro realizado!!!');
     Navigator.of(_context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => const Home()));
   }
 }

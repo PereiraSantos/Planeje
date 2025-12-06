@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:planeje/backup/page/backup_page.dart';
 import 'package:planeje/credentials/page/login/login_controller.dart';
 import 'package:planeje/credentials/page/register/register_page.dart';
+import 'package:planeje/utils/transitions_builder.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key}) {
@@ -87,7 +89,12 @@ class LoginPage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30),
-                  child: GestureDetector(onTap: () {}, child: const Text('Esqueci minha senha')),
+                  child: GestureDetector(
+                    onTap: () async {
+                      await Navigator.of(context).push(TransitionsBuilder.createRoute(BackupPage()));
+                    },
+                    child: const Text('Backup'),
+                  ),
                 ),
               ],
             ),

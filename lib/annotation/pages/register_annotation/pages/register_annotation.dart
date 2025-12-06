@@ -97,13 +97,12 @@ class RegisterAnnotation extends StatelessWidget {
                 await registerAnnotation.write();
 
                 if (context.mounted) {
-                  MessageUser.success(context, registerAnnotation.message!.message);
-                  // ignore: use_build_context_synchronously
+                  MessageUser.success(registerAnnotation.message!.message);
+
                   Navigator.pop(context, true);
                 }
               } catch (e) {
-                // ignore: use_build_context_synchronously
-                MessageUser.error(context, 'Erro ao registrar anotação');
+                MessageUser.error('Erro ao registrar anotação');
               }
             }),
           ],

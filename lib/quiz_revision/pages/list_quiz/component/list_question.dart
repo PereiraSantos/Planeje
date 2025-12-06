@@ -67,7 +67,7 @@ class _ListQuestionState extends State<ListQuestion> {
               GestureDetector(
                 onTap: () async {
                   if (listQuestionController.index == -1) {
-                    MessageUser.success(context, 'Necessário escolher um registro!!!');
+                    MessageUser.success('Necessário escolher um registro!!!');
                     return;
                   }
                   listQuestionController.showAnswer = true;

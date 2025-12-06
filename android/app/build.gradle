@@ -12,7 +12,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.example.planeje"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
 
@@ -29,7 +29,7 @@ android {
         applicationId = "com.br.planeje"
         minSdkVersion = flutter.minSdkVersion
         targetSdk = 35
-        compileSdk = 35
+        compileSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

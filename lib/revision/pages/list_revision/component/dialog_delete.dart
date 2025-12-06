@@ -33,7 +33,7 @@ class DialogDelete {
                       }
 
                       if (result != null && context.mounted) {
-                        MessageUser.success(context, 'Removido com sucesso');
+                        MessageUser.success('Removido com sucesso');
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context, true);
                       }

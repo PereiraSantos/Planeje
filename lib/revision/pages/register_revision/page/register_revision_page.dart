@@ -139,7 +139,7 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                                 setState(() {
                                   FocusScope.of(context).requestFocus(FocusNode());
                                   widget.annotations!.removeAt(index);
-                                  MessageUser.success(context, 'Deletado com sucesso!!!');
+                                  MessageUser.success('Deletado com sucesso!!!');
                                 });
                               },
                               icon: const Icon(Icons.delete, size: 18, color: Colors.red),
@@ -208,14 +208,14 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
 
                 if (idRevision != null && context.mounted) {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  MessageUser.success(context, widget.revision.message!.message);
-                  // ignore: use_build_context_synchronously
+                  MessageUser.success(widget.revision.message!.message);
+
                   Navigator.pop(context, true);
                 }
               } catch (e) {
                 if (context.mounted) {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  MessageUser.error(context, 'Erro ao registrar!!!, $e');
+                  MessageUser.error('Erro ao registrar!!!, $e');
                 }
               }
             }),

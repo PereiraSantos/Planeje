@@ -31,7 +31,7 @@ class LoginController {
     _loginUsercases.setUserDatabase();
   }
 
-  void _messageError() => MessageUser.alert(_context, 'Login incorreto!!!');
+  void _messageError() => MessageUser.alert('Login incorreto!!!');
 
   void _closeKeyboard() => FocusScope.of(_context).requestFocus(FocusNode());
 

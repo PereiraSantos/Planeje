@@ -60,14 +60,14 @@ class RegisterRevisionThemePage extends StatelessWidget {
 
                 if (idRevision != null && context.mounted) {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  MessageUser.success(context, revisionTheme.message!.message);
+                  MessageUser.success(revisionTheme.message!.message);
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context, true);
                 }
               } catch (e) {
                 if (context.mounted) {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  MessageUser.error(context, 'Erro ao registrar!!!, $e');
+                  MessageUser.error('Erro ao registrar!!!, $e');
                 }
               }
             }),

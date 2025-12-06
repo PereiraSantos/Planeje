@@ -67,7 +67,7 @@ class RegisterQuizPage extends StatelessWidget {
                   label: 'Adicionar questão',
                   onClick: () {
                     question.text.trim() == ''
-                        ? MessageUser.alert(context, 'Obrigatório ter uma questão.')
+                        ? MessageUser.alert('Obrigatório ter uma questão.')
                         : _tableQuestionNotifier.addQuestion(
                             Question(description: question.text)
                               ..setSync()
@@ -122,14 +122,14 @@ class RegisterQuizPage extends StatelessWidget {
 
                 if (context.mounted && result != null) {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  MessageUser.success(context, registerQuiz.message!.message);
+                  MessageUser.success(registerQuiz.message!.message);
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context, true);
                 }
               } catch (e) {
                 if (context.mounted) {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  MessageUser.error(context, 'Erro ao registrar!!!, $e');
+                  MessageUser.error('Erro ao registrar!!!, $e');
                 }
               }
             }),

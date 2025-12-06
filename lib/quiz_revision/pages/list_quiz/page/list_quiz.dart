@@ -97,12 +97,11 @@ class _ListQuizState extends State<ListQuiz> {
                               tableQuestionNotifier.clearList();
 
                               if (!context.mounted) return;
-                              MessageUser.success(context, 'Removido com sucesso');
+                              MessageUser.success('Removido com sucesso');
                               setState(() {});
                             }
                           } catch (e) {
-                            // ignore: use_build_context_synchronously
-                            MessageUser.error(context, 'Erro ao abrir dialogo');
+                            MessageUser.error('Erro ao abrir dialogo');
                           }
                         } else {
                           try {
@@ -115,8 +114,7 @@ class _ListQuizState extends State<ListQuiz> {
                             );
                             if (result) setState(() {});
                           } catch (e) {
-                            // ignore: use_build_context_synchronously
-                            MessageUser.error(context, 'Erro na rota quiz revisão');
+                            MessageUser.error('Erro na rota quiz revisão');
                           }
                         }
                         return null;
