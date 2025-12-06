@@ -4,10 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
 import 'package:planeje/credentials/page/splash_page/splash_page.dart';
+import 'package:planeje/database/app_database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await migrationDatabase();
+  await migrationDatabase();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarBrightness: Brightness.light, statusBarIconBrightness: Brightness.light),
