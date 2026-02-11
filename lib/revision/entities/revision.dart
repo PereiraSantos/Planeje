@@ -28,16 +28,7 @@ class Revision {
   @ColumnInfo(name: 'insert_app')
   bool? insertApp;
 
-  Revision({
-    this.id,
-    this.title,
-    this.description,
-    this.dateCreational,
-    this.idRevisionTheme,
-    this.sync = true,
-    this.disable = false,
-    this.insertApp = false,
-  });
+  Revision({this.id, this.title, this.description, this.dateCreational, this.idRevisionTheme, this.sync = true, this.disable = false, this.insertApp = false});
 
   void setId(int? value) => id = value;
   void setTitle(String value) => title = value;
@@ -49,18 +40,18 @@ class Revision {
   void setInsertApp(bool value) => insertApp = value;
 
   static Revision fromMapToObject(Map<String, dynamic> json) => Revision(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        dateCreational: json['dateCreational'],
-        idRevisionTheme: json['idRevisionTheme'],
-      );
+    id: json['id'],
+    title: json['title'],
+    description: json['description'],
+    dateCreational: json['dateCreational'],
+    idRevisionTheme: json['idRevisionTheme'],
+  );
 
   static Map<String, dynamic> fromObjectToMap(Revision revision) => {
-        "id": revision.id,
-        "title": revision.title,
-        "description": revision.description,
-        "dateCreational": revision.dateCreational,
-        "idRevisionTheme": revision.idRevisionTheme,
-      };
+    "id": revision.id,
+    "title": revision.title,
+    "description": revision.description,
+    "dateCreational": revision.dateCreational,
+    "idRevisionTheme": revision.idRevisionTheme,
+  };
 }

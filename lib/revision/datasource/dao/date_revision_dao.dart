@@ -47,4 +47,7 @@ abstract class DateRevisionDao {
 
   @Query('delete from date_revision')
   Future<void> deleteTable();
+
+  @Query('SELECT * FROM date_revision where id_revision = :idRevision and disable = 0 order by date_revision desc limit 1')
+  Future<DateRevision?> getDateRevisionByIdRevision(int idRevision);
 }

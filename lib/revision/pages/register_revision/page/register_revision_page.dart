@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:planeje/annotation/datasource/database/annotation_database.dart';
 import 'package:planeje/annotation/entities/annotation.dart';
 import 'package:planeje/annotation/utils/delete_annotation.dart';
 import 'package:planeje/annotation/utils/register_annotation.dart';
+import 'package:planeje/revision/datasource/database/date_revision_database.dart';
+import 'package:planeje/revision/entities/date_revision.dart';
+import 'package:planeje/revision/utils/register_date_revision.dart';
 import 'package:planeje/revision/utils/register_revision.dart';
+import 'package:planeje/utils/format_date.dart';
 import 'package:planeje/utils/type_message.dart';
 import 'package:planeje/widgets/persistent_footer_widget.dart';
 import 'package:planeje/widgets/dialog_annotation.dart';
@@ -13,10 +18,11 @@ import '../../../../widgets/text_form_field_widget.dart';
 
 // ignore: must_be_immutable
 class RegisterRevisionPage extends StatefulWidget {
-  RegisterRevisionPage({super.key, required this.revision, required this.id, this.annotations});
+  RegisterRevisionPage({super.key, required this.revision, required this.id, this.annotations, this.dateRevision});
 
   RevisionFactory revision;
   List<Annotation>? annotations;
+  DateRevision? dateRevision;
   int id;
 
   @override
@@ -27,14 +33,27 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController title = TextEditingController();
   final TextEditingController description = TextEditingController();
+  final TextEditingController dayNextRevision = TextEditingController();
   InsertAnnotation registerAnnotation = InsertAnnotation(AnnotationDatabase(), annotation: Annotation());
-  String nextDate = '';
+  RegisterDateRevision registerDateRevision = RegisterDateRevision(DateRevisionDatabase(), dateRevision: DateRevision());
+
+  ValueNotifier<String> nextDateRevision = ValueNotifier<String>(FormatDate.formatDate(DateTime.now()));
+  DateTime dateRevision = DateTime.now();
 
   @override
   void initState() {
     super.initState();
     description.text = widget.revision.revision?.description ?? '';
     title.text = widget.revision.revision?.title ?? '';
+
+    if (widget.dateRevision != null) {
+      dayNextRevision.text = FormatDate.dateParse(
+        widget.dateRevision!.nextDateRevision!,
+      ).difference(FormatDate.dateParse(widget.dateRevision!.dateRevision!)).inDays.toString();
+
+      nextDateRevision.value = widget.dateRevision!.nextDateRevision!;
+    }
+
     if (widget.revision.revision?.id == null) widget.annotations = [];
   }
 
@@ -62,18 +81,46 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
               children: [
                 TextFormFieldWidget(controller: title, maxLine: 1, hintText: 'Título', keyboardType: TextInputType.text, textArea: false),
                 TextFormFieldWidget(controller: description, maxLine: 5, hintText: 'Descrição', keyboardType: TextInputType.multiline, textArea: true),
+                TextFormFieldWidget(
+                  controller: dayNextRevision,
+                  maxLine: 1,
+                  hintText: 'Dias',
+                  keyboardType: TextInputType.number,
+                  textArea: false,
+                  inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                  onChange: (value) {
+                    nextDateRevision.value = FormatDate.formatDate(dateRevision.add(Duration(days: value != '' ? int.parse(value!) : 0)));
+                  },
+                ),
+                SizedBox(
+                  width: double.maxFinite,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Text('Data: ${FormatDate.formatDate(dateRevision)}', style: TextStyle(color: Colors.black54)),
+                  ),
+                ),
+                ValueListenableBuilder<String>(
+                  valueListenable: nextDateRevision,
+                  builder: (context, value, child) {
+                    return SizedBox(
+                      width: double.maxFinite,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Text('Próxima: $value', style: TextStyle(color: Colors.black54)),
+                      ),
+                    );
+                  },
+                ),
                 TextButton(
                   onPressed: () async {
                     await DialogAnnotation().build(context, <AnnotationRevision>(String title, String description) async {
                       Annotation annotation = Annotation(title: title, text: description);
-
                       if (widget.annotations!.isEmpty) annotation.setId(-1);
                       if (widget.annotations!.isNotEmpty) {
                         var id = (widget.annotations!.last.id ?? -1);
                         if (id > 0) id = 0;
                         annotation.setId(id - 1);
                       }
-
                       widget.annotations!.add(annotation);
                       setState(() {});
                     });
@@ -171,11 +218,32 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                 widget.revision.revision?.setDateCreational(widget.revision.revision?.dateCreational);
                 widget.revision.revision?.setSync();
                 widget.revision.revision?.setIdTevisionTheme(widget.id);
+
                 if (widget.revision.revision?.id == null) widget.revision.revision?.setInsertApp(true);
 
                 var idRevision = await widget.revision.write();
 
                 if (idRevision == null) return;
+
+                if (widget.dateRevision?.id == null) {
+                  registerDateRevision.dateRevision!.setDate(FormatDate.formatDateStringNotification(dateRevision));
+                  registerDateRevision.dateRevision!.setNextDate(nextDateRevision.value);
+                  registerDateRevision.dateRevision!.setIdRevision(idRevision);
+                  await registerDateRevision.writeDateRevision();
+                } else {
+                  UpdateDateRevision(
+                    DateRevisionDatabase(),
+                    dateRevision: DateRevision(
+                      id: widget.dateRevision!.id,
+                      dateRevision: widget.dateRevision!.dateRevision,
+                      idRevision: idRevision,
+                      nextDateRevision: nextDateRevision.value,
+                      disable: widget.dateRevision!.disable,
+                      insertApp: widget.dateRevision!.insertApp,
+                      sync: widget.dateRevision!.sync,
+                    ),
+                  ).writeDateRevision();
+                }
 
                 for (Annotation annotation in widget.annotations!) {
                   if (annotation.id != null && annotation.id! < 0) {

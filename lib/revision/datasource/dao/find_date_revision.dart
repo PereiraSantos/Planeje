@@ -7,8 +7,9 @@ import '../../../../database/app_database.dart';
 class FindDateRevisionDao {
   Future<List<RevisionTime>> findDateRevisionById(AppDatabase database, int id) async {
     List<RevisionTime> listRevisionTime = [];
-    List<Map> list =
-        await database.database.rawQuery('select * from date_revision as dr inner join revision as r on r.id = dr.id_revision where id_date  = $id');
+    List<Map> list = await database.database.rawQuery(
+      'select * from date_revision as dr inner join revision as r on r.id = dr.id_revision where id_date  = $id',
+    );
 
     for (var element in list) {
       listRevisionTime.add(
@@ -23,7 +24,9 @@ class FindDateRevisionDao {
             dateRevision: element['date_revision'],
             idRevision: element['id_revision'],
             id: element['id_date'],
+            nextDateRevision: element['next_date_revision'],
           ),
+          element['next_date_revision'],
         ),
       );
     }

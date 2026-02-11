@@ -28,15 +28,23 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
   String search = '';
 
   String componentDate(String dateRevision) {
-    DateTime date = FormatDate.dateTimeParse(dateRevision);
-    int day = FormatDate.newDate().difference(date).inDays;
+    DateTime date = FormatDate.newDate();
+    int day = FormatDate.dateParse(dateRevision).difference(DateTime.utc(date.year, date.month, date.day)).inDays;
 
-    return day > 0 ? '- há $day dias' : '';
+    if (day > 0) return '- daqui a $day dias';
+    if (day == 0) return '- hoje';
+
+    return '- atrasada';
   }
 
   String _validDateIsNull(String? dateRevision) {
     if (dateRevision == null) return '';
-    return '${FormatDate.formatDateString(dateRevision)} ${componentDate(dateRevision)}';
+    return 'Revisada: ${FormatDate.formatDateString(dateRevision)}';
+  }
+
+  String _validNextDateIsNull(String? dateRevision) {
+    if (dateRevision == null) return '';
+    return 'Próxima: ${FormatDate.formatDateString(dateRevision)} ${componentDate(dateRevision)}';
   }
 
   String _validTitleDescriptuionIsNull(String? title, String? description) {
@@ -168,6 +176,13 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                               visible: snapshot.data![index].dateRevision != null,
                               child: Text(
                                 _validDateIsNull(snapshot.data![index].dateRevision),
+                                style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
+                              ),
+                            ),
+                            Visibility(
+                              visible: snapshot.data![index].nextDateRevision != null,
+                              child: Text(
+                                _validNextDateIsNull(snapshot.data![index].nextDateRevision),
                                 style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300),
                               ),
                             ),

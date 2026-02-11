@@ -10,6 +10,9 @@ class DateRevision {
   @ColumnInfo(name: 'date_revision')
   String? dateRevision;
 
+  @ColumnInfo(name: 'next_date_revision')
+  String? nextDateRevision;
+
   @ColumnInfo(name: 'id_revision')
   int? idRevision;
 
@@ -22,31 +25,23 @@ class DateRevision {
   @ColumnInfo(name: 'insert_app')
   bool? insertApp;
 
-  DateRevision({
-    this.id,
-    this.dateRevision,
-    this.idRevision,
-    this.sync = true,
-    this.disable = false,
-    this.insertApp = false,
-  });
+  DateRevision({this.id, this.dateRevision, this.nextDateRevision, this.idRevision, this.sync = true, this.disable = false, this.insertApp = false});
 
   void setId(int? value) => id = value;
   void setDate(String? value) => dateRevision = value ?? FormatDate.formatDate(DateTime.now());
+  void setNextDate(String? value) => nextDateRevision = value;
   void setIdRevision(int? value) => idRevision = value;
   void setSync(bool? value) => sync = value ?? false;
   void setDisable(bool value) => disable = value;
   void setInsertApp(bool value) => insertApp = value;
 
-  static DateRevision fromMapToObject(Map<String, dynamic> json) => DateRevision(
-        id: json['id'],
-        dateRevision: json['dateRevision'],
-        idRevision: json['idRevision'],
-      );
+  static DateRevision fromMapToObject(Map<String, dynamic> json) =>
+      DateRevision(id: json['id'], dateRevision: json['dateRevision'], idRevision: json['idRevision'], nextDateRevision: json['next_date_revision']);
 
   static Map<String, dynamic> fromObjectToMap(DateRevision dateRevision) => {
-        "id": dateRevision.id,
-        "dateRevision": dateRevision.dateRevision,
-        "idRevision": dateRevision.idRevision,
-      };
+    "id": dateRevision.id,
+    "dateRevision": dateRevision.dateRevision,
+    "idRevision": dateRevision.idRevision,
+    "next_date_revision": dateRevision.nextDateRevision,
+  };
 }

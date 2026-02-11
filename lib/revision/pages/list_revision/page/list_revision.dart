@@ -4,10 +4,12 @@ import 'package:planeje/annotation/entities/annotation.dart';
 import 'package:planeje/annotation/utils/find_annotation.dart';
 import 'package:planeje/revision/datasource/database/date_revision_database.dart';
 import 'package:planeje/revision/datasource/database/revision_database.dart';
+import 'package:planeje/revision/entities/date_revision.dart';
 import 'package:planeje/revision/entities/revision.dart';
 import 'package:planeje/revision/entities/revision_time.dart';
 import 'package:planeje/revision/pages/list_revision/component/dialog_delete.dart';
 import 'package:planeje/revision/pages/register_revision/page/register_revision_page.dart';
+import 'package:planeje/revision/utils/find_date_revision.dart';
 import 'package:planeje/revision/utils/find_revision.dart';
 import 'package:planeje/revision/utils/register_date_revision.dart';
 import 'package:planeje/revision/utils/register_revision.dart';
@@ -96,6 +98,9 @@ class _ListRevisionState extends State<ListRevision> {
                         } else {
                           try {
                             List<Annotation>? list = await GetAnnotation(AnnotationDatabase()).getAnnotationWidthIdRevision(snapshot.data![index].revision.id!);
+                            DateRevision? dateRevision = await GetDateRevision(
+                              DateRevisionDatabase(),
+                            ).getDateRevisionByIdRevision(snapshot.data![index].revision.id!);
 
                             // ignore: use_build_context_synchronously
                             var result = await Navigator.of(context).push(
@@ -109,6 +114,7 @@ class _ListRevisionState extends State<ListRevision> {
                                   ),
                                   id: widget.revisionTheme.id!,
                                   annotations: list,
+                                  dateRevision: dateRevision,
                                 ),
                               ),
                             );

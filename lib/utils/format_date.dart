@@ -15,6 +15,8 @@ class FormatDate {
 
   static String formatDateBase(DateTime date) => DateFormat('yyyy/MM/dd').format(date);
 
+  static String formatDataBase(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
+
   static String getDateNumber() => FormatDate.formatDateBase(FormatDate.newDate()).replaceAll('/', '');
 
   static String formatDateString(String date) => date != '' ? DateFormat("dd/MM/yy").format(dateParse(date)) : '';
@@ -34,4 +36,6 @@ class FormatDate {
   static String formatTimeByString(DateTime date) => DateFormat('hh:mm').format(date);
 
   String formatDateWek(String date) => date != '' ? DateFormat("EEEE").format(dateParse(date)) : '';
+
+  static String formatDateCustumer(String date) => date != '' ? DateFormat("d 'de' MMMM',' y", "pt_BR").format(dateParse(date)) : '';
 }

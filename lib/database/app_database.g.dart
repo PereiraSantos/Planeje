@@ -94,13 +94,15 @@ class _$AppDatabase extends AppDatabase {
 
   LastSessionDao? _lastSessionDaoInstance;
 
+  GoalDAO? _goalDAOInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 4,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -118,7 +120,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `revision` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `description` TEXT, `date_creational` TEXT, `id_revision_theme` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `date_revision` (`id_date` INTEGER PRIMARY KEY AUTOINCREMENT, `date_revision` TEXT, `id_revision` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `date_revision` (`id_date` INTEGER PRIMARY KEY AUTOINCREMENT, `date_revision` TEXT, `next_date_revision` TEXT, `id_revision` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `annotation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `text` TEXT, `date_text` TEXT, `id_revision` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
@@ -137,6 +139,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `session` (`id` INTEGER NOT NULL, `email_user` TEXT NOT NULL, `token` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `last_session` (`id` INTEGER NOT NULL, `email` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `goal` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `complement` TEXT, `date` TEXT)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -201,6 +205,11 @@ class _$AppDatabase extends AppDatabase {
   LastSessionDao get lastSessionDao {
     return _lastSessionDaoInstance ??=
         _$LastSessionDao(database, changeListener);
+  }
+
+  @override
+  GoalDAO get goalDAO {
+    return _goalDAOInstance ??= _$GoalDAO(database, changeListener);
   }
 }
 
@@ -417,6 +426,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             (DateRevision item) => <String, Object?>{
                   'id_date': item.id,
                   'date_revision': item.dateRevision,
+                  'next_date_revision': item.nextDateRevision,
                   'id_revision': item.idRevision,
                   'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
                   'disable':
@@ -431,6 +441,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             (DateRevision item) => <String, Object?>{
                   'id_date': item.id,
                   'date_revision': item.dateRevision,
+                  'next_date_revision': item.nextDateRevision,
                   'id_revision': item.idRevision,
                   'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
                   'disable':
@@ -455,6 +466,7 @@ class _$DateRevisionDao extends DateRevisionDao {
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
             sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
             disable:
@@ -471,6 +483,7 @@ class _$DateRevisionDao extends DateRevisionDao {
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
             sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
             disable:
@@ -487,6 +500,7 @@ class _$DateRevisionDao extends DateRevisionDao {
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
             sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
             disable:
@@ -504,6 +518,7 @@ class _$DateRevisionDao extends DateRevisionDao {
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
             sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
             disable:
@@ -521,6 +536,7 @@ class _$DateRevisionDao extends DateRevisionDao {
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
             sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
             disable:
@@ -538,6 +554,7 @@ class _$DateRevisionDao extends DateRevisionDao {
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
             sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
             disable:
@@ -587,6 +604,7 @@ class _$DateRevisionDao extends DateRevisionDao {
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
             sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
             disable:
@@ -600,6 +618,14 @@ class _$DateRevisionDao extends DateRevisionDao {
   @override
   Future<void> deleteTable() async {
     await _queryAdapter.queryNoReturn('delete from date_revision');
+  }
+
+  @override
+  Future<DateRevision?> getDateRevisionByIdRevision(int idRevision) async {
+    return _queryAdapter.query(
+        'SELECT * FROM date_revision where id_revision = ?1 and disable = 0 order by date_revision desc limit 1',
+        mapper: (Map<String, Object?> row) => DateRevision(id: row['id_date'] as int?, dateRevision: row['date_revision'] as String?, nextDateRevision: row['next_date_revision'] as String?, idRevision: row['id_revision'] as int?, sync: row['sync'] == null ? null : (row['sync'] as int) != 0, disable: row['disable'] == null ? null : (row['disable'] as int) != 0, insertApp: row['insert_app'] == null ? null : (row['insert_app'] as int) != 0),
+        arguments: [idRevision]);
   }
 
   @override
@@ -1675,5 +1701,69 @@ class _$LastSessionDao extends LastSessionDao {
   Future<void> update(LastSession lastSession) async {
     await _lastSessionUpdateAdapter.update(
         lastSession, OnConflictStrategy.abort);
+  }
+}
+
+class _$GoalDAO extends GoalDAO {
+  _$GoalDAO(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _goalInsertionAdapter = InsertionAdapter(
+            database,
+            'goal',
+            (Goal item) => <String, Object?>{
+                  'id': item.id,
+                  'description': item.description,
+                  'complement': item.complement,
+                  'date': item.date
+                }),
+        _goalUpdateAdapter = UpdateAdapter(
+            database,
+            'goal',
+            ['id'],
+            (Goal item) => <String, Object?>{
+                  'id': item.id,
+                  'description': item.description,
+                  'complement': item.complement,
+                  'date': item.date
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Goal> _goalInsertionAdapter;
+
+  final UpdateAdapter<Goal> _goalUpdateAdapter;
+
+  @override
+  Future<List<Goal>> findAllGolas() async {
+    return _queryAdapter.queryList('SELECT * FROM goal',
+        mapper: (Map<String, Object?> row) => Goal(
+            id: row['id'] as int?,
+            description: row['description'] as String?,
+            complement: row['complement'] as String?,
+            date: row['date'] as String?));
+  }
+
+  @override
+  Future<void> deletGoal(int id) async {
+    await _queryAdapter
+        .queryNoReturn('delete from goal where id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<int> insertGoal(Goal goal) {
+    return _goalInsertionAdapter.insertAndReturnId(
+        goal, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<int> updateGoal(Goal goal) {
+    return _goalUpdateAdapter.updateAndReturnChangedRows(
+        goal, OnConflictStrategy.abort);
   }
 }

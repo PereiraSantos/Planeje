@@ -8,6 +8,8 @@ import 'package:planeje/credentials/datasources/dao/user_dao.dart';
 import 'package:planeje/credentials/entities/last_session.dart';
 import 'package:planeje/credentials/entities/session.dart';
 import 'package:planeje/credentials/entities/user.dart';
+import 'package:planeje/goal/dao/goal_dao.dart';
+import 'package:planeje/goal/entities/goal.dart';
 import 'package:planeje/quiz_revision/datasource/dao/question_dao.dart';
 import 'package:planeje/quiz_revision/datasource/dao/quiz_dao.dart';
 import 'package:planeje/quiz_revision/datasource/dao/revision_quiz_dao.dart';
@@ -56,7 +58,14 @@ final migration2to3 = Migration(2, 3, (database) async {
   await database.execute('ALTER revision ADD COLUMN id_revision_theme INTEGER');
 });
 
-@Database(version: 1, entities: [Revision, DateRevision, Annotation, Quiz, Question, Settings, User, RevisionQuiz, RevisionTheme, Session, LastSession])
+final migration3to4 = Migration(3, 4, (database) async {
+  await database.execute(
+    'CREATE TABLE IF NOT EXISTS `goal` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `complement` TEXT, `date` TEXT, `color` INTEGER)',
+  );
+  await database.execute('ALTER date_revision ADD COLUMN next_date_revision TEXT');
+});
+
+@Database(version: 4, entities: [Revision, DateRevision, Annotation, Quiz, Question, Settings, User, RevisionQuiz, RevisionTheme, Session, LastSession, Goal])
 abstract class AppDatabase extends FloorDatabase {
   RevisionDao get revisionDao;
   DateRevisionDao get dateRevisionDao;
@@ -69,10 +78,11 @@ abstract class AppDatabase extends FloorDatabase {
   RevisionThemeDao get revisionThemeDao;
   SessionDao get sessionDao;
   LastSessionDao get lastSessionDao;
+  GoalDAO get goalDAO;
 }
 
 Future<AppDatabase> migrationDatabase() async {
-  return await $FloorAppDatabase.databaseBuilder('app_database.db').addMigrations([migration1to2, migration2to3]).build();
+  return await $FloorAppDatabase.databaseBuilder('app_database.db').addMigrations([migration1to2, migration2to3, migration3to4]).build();
 }
 
 Future<AppDatabase> getInstance() async {

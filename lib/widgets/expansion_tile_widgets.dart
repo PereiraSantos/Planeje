@@ -2,20 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:planeje/annotation/datasource/database/annotation_database.dart';
 import 'package:planeje/annotation/entities/annotation.dart';
 import 'package:planeje/annotation/utils/find_annotation.dart';
-import 'package:planeje/revision/datasource/database/date_revision_database.dart';
+
 import 'package:planeje/revision/entities/date_revision.dart';
 import 'package:planeje/revision/entities/revision.dart';
-import 'package:planeje/revision/utils/register_date_revision.dart';
+import 'package:planeje/revision/pages/list_revision/component/dialog_revision.dart';
+
 import 'package:planeje/utils/format_date.dart';
 
 // ignore: must_be_immutable
 class ExpansionTileWidgets extends StatefulWidget {
-  const ExpansionTileWidgets({
-    super.key,
-    required this.revision,
-    required this.dateRevision,
-    required this.onClick,
-  });
+  const ExpansionTileWidgets({super.key, required this.revision, required this.dateRevision, required this.onClick});
 
   final Revision revision;
   final DateRevision dateRevision;
@@ -29,26 +25,38 @@ class _ExpansionTileWidgetsState extends State<ExpansionTileWidgets> {
   bool reviser = false;
 
   String componentDate() {
-    DateTime date = FormatDate.dateTimeParse(widget.dateRevision.dateRevision!);
-    int day = FormatDate.newDate().difference(date).inDays;
+    DateTime date = FormatDate.newDate();
+    int day = FormatDate.dateParse(widget.dateRevision.nextDateRevision!).difference(DateTime.utc(date.year, date.month, date.day)).inDays;
 
-    return day > 0 ? '- há $day dias' : '';
+    if (day > 0) return '- daqui a $day dias';
+    if (day == 0) return '- hoje';
+
+    return '- atrasada';
   }
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
       initiallyExpanded: false,
-      title: Text(widget.revision.title ?? '', style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0))),
+      title: Text(
+        widget.revision.title ?? '',
+        style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
+      ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Descrição: ${widget.revision.description ?? ''}', style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300)),
           Text(
-              widget.dateRevision.dateRevision == null
-                  ? 'Não revisada'
-                  : 'Revisada: ${FormatDate.formatDateString(widget.dateRevision.dateRevision!)} ${componentDate()}',
-              style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300))
+            widget.dateRevision.dateRevision == null ? 'Não revisada' : 'Revisada: ${FormatDate.formatDateString(widget.dateRevision.dateRevision!)}',
+            style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300),
+          ),
+          Visibility(
+            visible: widget.dateRevision.nextDateRevision != null,
+            child: Text(
+              'Próxima: ${FormatDate.formatDateString(widget.dateRevision.nextDateRevision!)} ${componentDate()}',
+              style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300),
+            ),
+          ),
         ],
       ),
       backgroundColor: Colors.white,
@@ -71,19 +79,9 @@ class _ExpansionTileWidgetsState extends State<ExpansionTileWidgets> {
                     height: 25,
                     child: IconButton(
                       onPressed: () async {
-                        await RegisterDateRevision(DateRevisionDatabase(),
-                            dateRevision: DateRevision(
-                              dateRevision: FormatDate.formatDateStringNotification(DateTime.now()),
-                              idRevision: widget.revision.id,
-                              sync: false,
-                              insertApp: true,
-                            )).writeDateRevision().whenComplete(() => widget.onClick());
+                        await DialogRevision.build(context, widget.revision.id!).whenComplete(() => widget.onClick());
                       },
-                      icon: const Icon(
-                        Icons.replay_circle_filled_rounded,
-                        color: Colors.black54,
-                        size: 20,
-                      ),
+                      icon: const Icon(Icons.replay_circle_filled_rounded, color: Colors.black54, size: 20),
                       padding: EdgeInsets.zero,
                     ),
                   ),
@@ -104,7 +102,10 @@ class _ExpansionTileWidgetsState extends State<ExpansionTileWidgets> {
                           children: [
                             const Padding(
                               padding: EdgeInsets.only(left: 5, top: 5),
-                              child: Text('Anotação', style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0))),
+                              child: Text(
+                                'Anotação',
+                                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
+                              ),
                             ),
                             const Divider(),
                             ListView.builder(
@@ -124,10 +125,7 @@ class _ExpansionTileWidgetsState extends State<ExpansionTileWidgets> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             const Expanded(
-                                              child: Text(
-                                                'Título: ',
-                                                style: TextStyle(fontSize: 14, color: Color.fromARGB(170, 0, 0, 0)),
-                                              ),
+                                              child: Text('Título: ', style: TextStyle(fontSize: 14, color: Color.fromARGB(170, 0, 0, 0))),
                                             ),
                                             Expanded(
                                               flex: 4,
@@ -144,27 +142,21 @@ class _ExpansionTileWidgetsState extends State<ExpansionTileWidgets> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           const Expanded(
-                                            child: Text(
-                                              'Descrição: ',
-                                              style: TextStyle(fontSize: 13, color: Colors.black54),
-                                            ),
+                                            child: Text('Descrição: ', style: TextStyle(fontSize: 13, color: Colors.black54)),
                                           ),
                                           Expanded(
                                             flex: 4,
-                                            child: Text(
-                                              snapshot.data![index].text ?? '',
-                                              style: const TextStyle(fontSize: 13, color: Colors.black54),
-                                            ),
+                                            child: Text(snapshot.data![index].text ?? '', style: const TextStyle(fontSize: 13, color: Colors.black54)),
                                           ),
                                         ],
                                       ),
-                                      const Padding(padding: EdgeInsets.all(2))
+                                      const Padding(padding: EdgeInsets.all(2)),
                                     ],
                                   ),
                                 );
                               },
                             ),
-                            const Padding(padding: EdgeInsets.all(2))
+                            const Padding(padding: EdgeInsets.all(2)),
                           ],
                         ),
                       );
@@ -172,14 +164,12 @@ class _ExpansionTileWidgetsState extends State<ExpansionTileWidgets> {
                       return const SizedBox();
                     }
                   } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),
             ),
-            const Padding(padding: EdgeInsets.all(5))
+            const Padding(padding: EdgeInsets.all(5)),
           ],
         ),
       ],
