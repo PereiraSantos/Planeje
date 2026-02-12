@@ -4,7 +4,7 @@
 
     
     <application
-        android:label="planeje"
+        android:label="Planeje"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
