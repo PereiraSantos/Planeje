@@ -236,7 +236,7 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                     dateRevision: DateRevision(
                       id: widget.dateRevision!.id,
                       dateRevision: widget.dateRevision!.dateRevision,
-                      idRevision: idRevision,
+                      idRevision: widget.dateRevision!.idRevision,
                       nextDateRevision: nextDateRevision.value,
                       disable: widget.dateRevision!.disable,
                       insertApp: widget.dateRevision!.insertApp,

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:planeje/database/app_database.dart';
 import 'package:planeje/revision/entities/date_revision.dart';
 import 'package:planeje/revision_theme/entities/revision_theme_complement.dart';
@@ -32,18 +33,22 @@ class RevisionThemeInfoDao {
         List<DateRevision> listRevisionTime = [];
 
         for (var item in listRevision) {
-          int idRevision = item['id'];
-          String sqlDate = 'select * from date_revision where id_revision = $idRevision order by id_date desc limit 1';
-          List<Map> listDate = await database.database.rawQuery(sqlDate);
+          try {
+            int idRevision = item['id'];
+            String sqlDate = 'select * from date_revision where id_revision = $idRevision order by id_date desc limit 1';
+            List<Map> listDate = await database.database.rawQuery(sqlDate);
 
-          listRevisionTime.add(
-            DateRevision(
-              dateRevision: listDate[0]['date_revision'],
-              idRevision: listDate[0]['id_revision'],
-              id: listDate[0]['id_date'],
-              nextDateRevision: listDate[0]['next_date_revision'],
-            ),
-          );
+            listRevisionTime.add(
+              DateRevision(
+                dateRevision: listDate[0]['date_revision'],
+                idRevision: listDate[0]['id_revision'],
+                id: listDate[0]['id_date'],
+                nextDateRevision: listDate[0]['next_date_revision'],
+              ),
+            );
+          } catch (e) {
+            debugPrint(e.toString());
+          }
         }
 
         if (listRevisionTime.isNotEmpty) {

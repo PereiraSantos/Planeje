@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:planeje/revision/entities/date_revision.dart';
 import 'package:planeje/revision/entities/revision.dart';
 import 'package:planeje/revision/entities/revision_time.dart';
@@ -19,25 +20,28 @@ class FindRevisionDao {
       int id = element['id'];
       String sql = 'select * from date_revision where id_revision = $id order by id_date desc limit 1';
       List<Map> listDate = await database.database.rawQuery(sql);
-
-      listRevisionTime.add(
-        RevisionTime(
-          Revision(
-            dateCreational: element['date_creational'],
-            description: element['description'],
-            id: element['id'],
-            title: element['title'],
-            idRevisionTheme: element['id_revision_theme'],
+      try {
+        listRevisionTime.add(
+          RevisionTime(
+            Revision(
+              dateCreational: element['date_creational'],
+              description: element['description'],
+              id: element['id'],
+              title: element['title'],
+              idRevisionTheme: element['id_revision_theme'],
+            ),
+            DateRevision(
+              dateRevision: listDate[0]['date_revision'],
+              idRevision: listDate[0]['id_revision'],
+              id: listDate[0]['id_date'],
+              nextDateRevision: listDate[0]['next_date_revision'],
+            ),
+            listDate[0]['next_date_revision'],
           ),
-          DateRevision(
-            dateRevision: listDate[0]['date_revision'],
-            idRevision: listDate[0]['id_revision'],
-            id: listDate[0]['id_date'],
-            nextDateRevision: listDate[0]['next_date_revision'],
-          ),
-          listDate[0]['next_date_revision'],
-        ),
-      );
+        );
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
 
     listRevisionTime.sort((a, b) => FormatDate.dateParse(a.date!).compareTo(FormatDate.dateParse(b.date!)));
