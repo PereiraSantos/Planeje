@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:planeje/goal/entities/goal.dart';
 import 'package:planeje/goal/pages/list_goal/component/dialog_delete_goal.dart';
+import 'package:planeje/goal/pages/list_goal/component/dialog_finish_goal.dart';
 import 'package:planeje/goal/pages/list_goal/controller/list_goal_controller.dart';
 import 'package:planeje/goal/pages/register_goal/page/register_goal_page.dart';
 
@@ -101,24 +102,60 @@ class ListGoal extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  goals[index].description.toString(),
-                                  style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        goals[index].description.toString(),
+                                        style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          minimumSize: Size(0, 20),
+                                          padding: EdgeInsets.symmetric(horizontal: 16),
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                              color: !goals[index].concluded! ? const Color.fromARGB(123, 33, 149, 243) : Colors.grey,
+                                              width: 0.4,
+                                            ),
+                                            borderRadius: BorderRadius.circular(05),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          await DialogFinishGoal.build(context, snapshot.data![index]);
+                                        },
+                                        child: Text(
+                                          !goals[index].concluded! ? 'Finalizar' : 'Finalizado',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w300,
+                                            color: !goals[index].concluded! ? const Color.fromARGB(226, 33, 149, 243) : Colors.grey,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 Visibility(
                                   visible: goals[index].complement != '',
                                   child: Text(
                                     goals[index].complement.toString(),
-                                    style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
+                                    style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
                                   ),
                                 ),
                                 Text(
                                   'Prazo: ${FormatDate.formatDateCustumer(goals[index].date!)}',
-                                  style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w300, color: Color.fromARGB(130, 0, 0, 0)),
+                                  style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300, color: Color.fromARGB(130, 0, 0, 0)),
                                 ),
                                 Text(
                                   componentDate(goals[index].date!),
-                                  style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w300, color: Color.fromARGB(130, 0, 0, 0)),
+                                  style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300, color: Color.fromARGB(130, 0, 0, 0)),
                                 ),
                               ],
                             ),

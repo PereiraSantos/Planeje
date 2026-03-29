@@ -32,7 +32,7 @@ class LoginPage extends StatelessWidget {
                 SizedBox(width: 100, height: 100, child: Image.asset('assets/icon.png')),
                 TextFormField(
                   controller: _email,
-                  decoration: const InputDecoration(hintText: 'Email'),
+                  decoration: const InputDecoration(hintText: 'Login'),
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Login obrigatório';
                     return null;

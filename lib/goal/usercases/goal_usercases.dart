@@ -14,7 +14,7 @@ class GoalUsercases {
   Future<void> delete(int id) async {
     reload.value = false;
     AppDatabase database = await getInstance();
-    await database.goalDAO.deletGoal(id);
+    await database.goalDAO.deleteGoal(id);
     reload.value = true;
   }
 
@@ -29,6 +29,13 @@ class GoalUsercases {
     reload.value = false;
     AppDatabase database = await getInstance();
     await database.goalDAO.updateGoal(goal);
+    reload.value = true;
+  }
+
+  Future<void> updateConcluded(int id) async {
+    reload.value = false;
+    AppDatabase database = await getInstance();
+    await database.goalDAO.updateConcluded(id, true);
     reload.value = true;
   }
 }

@@ -15,5 +15,8 @@ class Goal {
   @ColumnInfo()
   String? date;
 
-  Goal({this.id, this.description, this.complement, this.date});
+  @ColumnInfo()
+  bool? concluded;
+
+  Goal({this.id, this.description, this.complement, this.date, this.concluded = false});
 }

@@ -65,7 +65,11 @@ final migration3to4 = Migration(3, 4, (database) async {
   await database.execute('ALTER date_revision ADD COLUMN next_date_revision TEXT');
 });
 
-@Database(version: 4, entities: [Revision, DateRevision, Annotation, Quiz, Question, Settings, User, RevisionQuiz, RevisionTheme, Session, LastSession, Goal])
+final migration4to5 = Migration(4, 5, (database) async {
+  await database.execute('ALTER goal ADD COLUMN concluded INTEGER DEFAULT FALSE');
+});
+
+@Database(version: 5, entities: [Revision, DateRevision, Annotation, Quiz, Question, Settings, User, RevisionQuiz, RevisionTheme, Session, LastSession, Goal])
 abstract class AppDatabase extends FloorDatabase {
   RevisionDao get revisionDao;
   DateRevisionDao get dateRevisionDao;
@@ -82,7 +86,7 @@ abstract class AppDatabase extends FloorDatabase {
 }
 
 Future<AppDatabase> migrationDatabase() async {
-  return await $FloorAppDatabase.databaseBuilder('app_database.db').addMigrations([migration1to2, migration2to3, migration3to4]).build();
+  return await $FloorAppDatabase.databaseBuilder('app_database.db').addMigrations([migration1to2, migration2to3, migration3to4, migration4to5]).build();
 }
 
 Future<AppDatabase> getInstance() async {

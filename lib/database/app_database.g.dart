@@ -102,7 +102,7 @@ class _$AppDatabase extends AppDatabase {
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 4,
+      version: 5,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -140,7 +140,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `last_session` (`id` INTEGER NOT NULL, `email` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `goal` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `complement` TEXT, `date` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `goal` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `complement` TEXT, `date` TEXT, `concluded` INTEGER)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -1716,7 +1716,9 @@ class _$GoalDAO extends GoalDAO {
                   'id': item.id,
                   'description': item.description,
                   'complement': item.complement,
-                  'date': item.date
+                  'date': item.date,
+                  'concluded':
+                      item.concluded == null ? null : (item.concluded! ? 1 : 0)
                 }),
         _goalUpdateAdapter = UpdateAdapter(
             database,
@@ -1726,7 +1728,9 @@ class _$GoalDAO extends GoalDAO {
                   'id': item.id,
                   'description': item.description,
                   'complement': item.complement,
-                  'date': item.date
+                  'date': item.date,
+                  'concluded':
+                      item.concluded == null ? null : (item.concluded! ? 1 : 0)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -1746,13 +1750,26 @@ class _$GoalDAO extends GoalDAO {
             id: row['id'] as int?,
             description: row['description'] as String?,
             complement: row['complement'] as String?,
-            date: row['date'] as String?));
+            date: row['date'] as String?,
+            concluded: row['concluded'] == null
+                ? null
+                : (row['concluded'] as int) != 0));
   }
 
   @override
-  Future<void> deletGoal(int id) async {
+  Future<void> deleteGoal(int id) async {
     await _queryAdapter
         .queryNoReturn('delete from goal where id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<int?> updateConcluded(
+    int id,
+    bool concluded,
+  ) async {
+    return _queryAdapter.query('update goal set concluded = ?2 where id = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as int,
+        arguments: [id, concluded ? 1 : 0]);
   }
 
   @override

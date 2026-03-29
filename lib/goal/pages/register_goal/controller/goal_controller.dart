@@ -35,4 +35,6 @@ class GoalController {
   }
 
   Future<void> delete(int id) async => await GoalUsercases().delete(id);
+
+  Future<void> update(int id) async => await GoalUsercases().updateConcluded(id);
 }

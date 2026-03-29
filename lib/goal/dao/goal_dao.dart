@@ -13,5 +13,8 @@ abstract class GoalDAO {
   Future<int> updateGoal(Goal goal);
 
   @Query('delete from goal where id = :id')
-  Future<void> deletGoal(int id);
+  Future<void> deleteGoal(int id);
+
+  @Query('update goal set concluded = :concluded where id = :id')
+  Future<int?> updateConcluded(int id, bool concluded);
 }

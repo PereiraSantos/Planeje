@@ -26,7 +26,7 @@ class RegisterPage extends StatelessWidget {
               children: [
                 TextFormField(
                   controller: _email,
-                  decoration: const InputDecoration(hintText: 'Email'),
+                  decoration: const InputDecoration(hintText: 'Login'),
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Campo obrigatório';
                     return null;
