@@ -10,6 +10,7 @@ import 'package:planeje/revision/utils/register_date_revision.dart';
 import 'package:planeje/revision/utils/register_revision.dart';
 import 'package:planeje/utils/format_date.dart';
 import 'package:planeje/utils/type_message.dart';
+import 'package:planeje/widgets/check_date_revision.dart';
 import 'package:planeje/widgets/persistent_footer_widget.dart';
 import 'package:planeje/widgets/dialog_annotation.dart';
 import '../../../../utils/message_user.dart';
@@ -102,12 +103,18 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                 ValueListenableBuilder<String>(
                   valueListenable: nextDateRevision,
                   builder: (context, value, child) {
-                    return SizedBox(
-                      width: double.maxFinite,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text('Próxima: $value', style: TextStyle(color: Colors.black54)),
-                      ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: double.maxFinite,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: Text('Próxima: $value', style: TextStyle(color: Colors.black54)),
+                          ),
+                        ),
+                        CheckDateRevision(date: value),
+                      ],
                     );
                   },
                 ),

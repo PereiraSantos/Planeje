@@ -22,6 +22,7 @@ abstract class DateRevisionDatabaseFactory {
   Future<List<DateRevision>?> findDateRevisionDisable();
   Future<void> deleteTable();
   Future<DateRevision?> getDateRevisionByIdRevision(int idRevision);
+  Future<List<DateRevision>?> getDateNextRevision(String nextDateRevision);
 }
 
 class DateRevisionDatabase implements DateRevisionDatabaseFactory {
@@ -125,5 +126,11 @@ class DateRevisionDatabase implements DateRevisionDatabaseFactory {
   Future<DateRevision?> getDateRevisionByIdRevision(int idRevision) async {
     final database = await getInstance();
     return await database.dateRevisionDao.getDateRevisionByIdRevision(idRevision);
+  }
+
+  @override
+  Future<List<DateRevision>?> getDateNextRevision(String nextDateRevision) async {
+    final database = await getInstance();
+    return await database.dateRevisionDao.getDateNextRevision(nextDateRevision);
   }
 }

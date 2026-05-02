@@ -137,7 +137,7 @@ class _ListQuizState extends State<ListQuiz> {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
                                 child: Text(
-                                  snapshot.data![index].topic ?? '',
+                                  'Tema: ${snapshot.data![index].topic ?? ''}',
                                   style: const TextStyle(fontSize: 16, color: Colors.black54, fontWeight: FontWeight.w500),
                                 ),
                               ),
@@ -145,7 +145,7 @@ class _ListQuizState extends State<ListQuiz> {
                             Padding(
                               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 05),
                               child: Text(
-                                "${snapshot.data![index].description}?",
+                                "Pergunta: ${snapshot.data![index].description}",
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(fontSize: 15, color: Colors.black54, fontWeight: FontWeight.w400),
                               ),

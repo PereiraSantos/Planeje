@@ -8,6 +8,7 @@ import 'package:planeje/revision/entities/revision.dart';
 import 'package:planeje/revision/pages/list_revision/component/dialog_revision.dart';
 
 import 'package:planeje/utils/format_date.dart';
+import 'package:planeje/widgets/button_simple_custom.dart';
 
 // ignore: must_be_immutable
 class ExpansionTileWidgets extends StatefulWidget {
@@ -67,25 +68,15 @@ class _ExpansionTileWidgetsState extends State<ExpansionTileWidgets> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Revisar', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  SizedBox(
-                    width: 35,
-                    height: 25,
-                    child: IconButton(
-                      onPressed: () async {
-                        await DialogRevision.build(context, widget.revision.id!).whenComplete(() => widget.onClick());
-                      },
-                      icon: const Icon(Icons.replay_circle_filled_rounded, color: Colors.black54, size: 20),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
+            Align(
+              alignment: AlignmentGeometry.centerRight,
+              child: Container(
+                width: 70,
+                margin: EdgeInsets.only(right: 20, bottom: 5),
+                child: ButtonSimpleCustom(
+                  onTap: () async => await DialogRevision.build(context, widget.revision.id!).whenComplete(() => widget.onClick()),
+                  label: 'Revisar',
+                ),
               ),
             ),
             Padding(

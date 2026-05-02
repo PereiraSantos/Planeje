@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:planeje/revision/datasource/database/date_revision_database.dart';
 import 'package:planeje/revision/entities/date_revision.dart';
-
 import 'package:planeje/revision/utils/register_date_revision.dart';
 import 'package:planeje/utils/format_date.dart';
 import 'package:planeje/utils/message_user.dart';
+import 'package:planeje/widgets/check_date_revision.dart';
 import 'package:planeje/widgets/text_form_field_widget.dart';
 
 class DialogRevision {
@@ -48,12 +48,18 @@ class DialogRevision {
                 ValueListenableBuilder<String>(
                   valueListenable: nextDateRevision,
                   builder: (context, value, child) {
-                    return SizedBox(
-                      width: double.maxFinite,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text('Próxima: $value', style: TextStyle(color: Colors.black54)),
-                      ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: double.maxFinite,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: Text('Próxima: $value', style: TextStyle(color: Colors.black54)),
+                          ),
+                        ),
+                        CheckDateRevision(date: value),
+                      ],
                     );
                   },
                 ),

@@ -84,6 +84,29 @@ void main() {
 
       expect(passwordTemp, '12345');
     });
+
+    test('autenticação sem login', () async {
+      sessionManager.createSession(User("", "123"));
+
+      Session? session = sessionManager.getSession();
+
+      expect(session?.token, '');
+    });
+
+    test('autenticação sem senha', () async {
+      sessionManager.createSession(User("mail1@teste.com", ""));
+
+      Session? session = sessionManager.getSession();
+
+      expect(session?.token, '');
+    });
+
+    test('autenticação valor maximo', () async {
+      User? user = await authentication.findByEmail("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaemail1@teste.com");
+      String passwordTemp = await authentication.update(user!.email);
+
+      expect(passwordTemp, '12345');
+    });
   });
 
   group('Sessão', () {

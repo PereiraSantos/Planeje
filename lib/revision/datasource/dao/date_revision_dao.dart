@@ -50,4 +50,7 @@ abstract class DateRevisionDao {
 
   @Query('SELECT * FROM date_revision where id_revision = :idRevision and disable = 0 order by date_revision desc limit 1')
   Future<DateRevision?> getDateRevisionByIdRevision(int idRevision);
+
+  @Query('select * from date_revision where next_date_revision = :nextDateRevision')
+  Future<List<DateRevision>?> getDateNextRevision(String nextDateRevision);
 }

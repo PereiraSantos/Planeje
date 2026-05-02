@@ -13,6 +13,7 @@ import 'package:planeje/utils/transitions_builder.dart';
 import 'package:planeje/utils/type_message.dart';
 
 import 'package:planeje/widgets/app_bar_widget/add_app_bar_widget.dart';
+import 'package:planeje/widgets/button_simple_custom.dart';
 import 'package:planeje/widgets/search.dart';
 
 import '../component/dialog_delete.dart';
@@ -62,7 +63,7 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
         elevation: 0,
         toolbarHeight: 46,
         title: const Text(
-          'Revisão',
+          'Tema',
           style: TextStyle(fontSize: 18, color: Colors.black54, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -150,18 +151,18 @@ class _ListRevisionThemeState extends State<ListRevisionTheme> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  flex: 10,
+                                  flex: 8,
                                   child: Text(
                                     snapshot.data![index].description ?? '',
                                     style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w500, color: Color.fromARGB(130, 0, 0, 0)),
                                   ),
                                 ),
                                 Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await Navigator.of(context).push(TransitionsBuilder.createRoute(ListRevision(revisionTheme: snapshot.data![index])));
-                                    },
-                                    child: const Icon(Icons.menu_book_rounded, size: 20, color: Colors.black45),
+                                  flex: 2,
+                                  child: ButtonSimpleCustom(
+                                    onTap: () async =>
+                                        await Navigator.of(context).push(TransitionsBuilder.createRoute(ListRevision(revisionTheme: snapshot.data![index]))),
+                                    label: 'Revisões',
                                   ),
                                 ),
                               ],

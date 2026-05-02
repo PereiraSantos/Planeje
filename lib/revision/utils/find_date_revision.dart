@@ -7,6 +7,7 @@ abstract class FindDateRevisionFactory {
   Future<List<DateRevision>?> findDateRevisionDisable();
   Future<List<DateRevision>?> findDateRevisionByIdRevision(int idRevision);
   Future<DateRevision?> getDateRevisionByIdRevision(int idRevision);
+  Future<List<DateRevision>?> getDateNextRevision(String nextDateRevision);
 }
 
 class GetDateRevision implements FindDateRevisionFactory {
@@ -37,5 +38,10 @@ class GetDateRevision implements FindDateRevisionFactory {
   @override
   Future<DateRevision?> getDateRevisionByIdRevision(int idRevision) async {
     return await dateRevisionDatabase.getDateRevisionByIdRevision(idRevision);
+  }
+
+  @override
+  Future<List<DateRevision>?> getDateNextRevision(String nextDateRevision) async {
+    return await dateRevisionDatabase.getDateNextRevision(nextDateRevision);
   }
 }

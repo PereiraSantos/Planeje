@@ -629,6 +629,25 @@ class _$DateRevisionDao extends DateRevisionDao {
   }
 
   @override
+  Future<List<DateRevision>?> getDateNextRevision(
+      String nextDateRevision) async {
+    return _queryAdapter.queryList(
+        'select * from date_revision where next_date_revision = ?1',
+        mapper: (Map<String, Object?> row) => DateRevision(
+            id: row['id_date'] as int?,
+            dateRevision: row['date_revision'] as String?,
+            nextDateRevision: row['next_date_revision'] as String?,
+            idRevision: row['id_revision'] as int?,
+            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            disable:
+                row['disable'] == null ? null : (row['disable'] as int) != 0,
+            insertApp: row['insert_app'] == null
+                ? null
+                : (row['insert_app'] as int) != 0),
+        arguments: [nextDateRevision]);
+  }
+
+  @override
   Future<int> insertDateRevision(DateRevision dateRevision) {
     return _dateRevisionInsertionAdapter.insertAndReturnId(
         dateRevision, OnConflictStrategy.abort);
