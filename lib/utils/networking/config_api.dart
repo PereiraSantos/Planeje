@@ -2,12 +2,16 @@ import 'package:dio/dio.dart';
 
 class ConfigApi {
   final _dio = Dio();
-  final String _host = 'http://192.168.1.102';
-  final int _port = 8080;
+  String? _host;
+  int? _port;
 
   Dio get dio => _dio;
 
-  int get port => _port;
+  int? get port => _port;
 
-  String get host => _host;
+  String? get host => _host;
+
+  set host(String value) => _host = value;
+
+  set port(int value) => _port = value;
 }

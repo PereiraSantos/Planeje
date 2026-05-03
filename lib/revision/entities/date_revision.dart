@@ -36,12 +36,12 @@ class DateRevision {
   void setInsertApp(bool value) => insertApp = value;
 
   static DateRevision fromMapToObject(Map<String, dynamic> json) =>
-      DateRevision(id: json['id'], dateRevision: json['dateRevision'], idRevision: json['idRevision'], nextDateRevision: json['next_date_revision']);
+      DateRevision(id: json['id'], dateRevision: json['dateRevision'], idRevision: json['idRevision'], nextDateRevision: json['nextdateRevision']);
 
   static Map<String, dynamic> fromObjectToMap(DateRevision dateRevision) => {
     "id": dateRevision.id,
     "dateRevision": dateRevision.dateRevision,
     "idRevision": dateRevision.idRevision,
-    "next_date_revision": dateRevision.nextDateRevision,
+    "nextdateRevision": dateRevision.nextDateRevision,
   };
 }
