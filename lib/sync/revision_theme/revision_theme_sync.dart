@@ -14,7 +14,7 @@ import 'package:planeje/utils/networking/endpoint/network.dart';
 import 'package:planeje/utils/request_item.dart';
 
 class RevisionThemeSync {
-  Future<bool> getRevisionTheme() async {
+  Future<void> getRevisionTheme() async {
     Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.theme]).get();
 
     RevisionThemeController revisionThemeController = RevisionThemeController();
@@ -30,10 +30,9 @@ class RevisionThemeSync {
 
       await revisionThemeController.writeRevisionTheme();
     }
-    return true;
   }
 
-  Future<bool> postRevisionTheme() async {
+  Future<void> postRevisionTheme() async {
     List<RevisionTheme> lists = await FindRevisionTheme(RevisionThemeDatabase()).findAllRevisionThemeSync() ?? [];
 
     if (lists.isNotEmpty) {
@@ -45,7 +44,9 @@ class RevisionThemeSync {
         Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.theme]).post(RevisionTheme.fromObjectToMap(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
+          item.insertApp = false;
+          item.id = idOld;
 
           await UpdateRevisionTheme(RevisionThemeDatabase(), revisionTheme: item).write();
 
@@ -53,7 +54,6 @@ class RevisionThemeSync {
         }
       }
     }
-    return true;
   }
 
   Future<void> updateIdRevisionTheme(int id, int idOld) async {
@@ -68,7 +68,7 @@ class RevisionThemeSync {
     }
   }
 
-  Future<bool> postRevisionThemeDisable() async {
+  Future<void> postRevisionThemeDisable() async {
     List<RevisionTheme> lists = await FindRevisionTheme(RevisionThemeDatabase()).findRevisionThemeDisable() ?? [];
 
     if (lists.isNotEmpty) {
@@ -76,12 +76,11 @@ class RevisionThemeSync {
         Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.theme, Endpoint.update]).post(RequestItem().convert(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
 
           await UpdateRevisionTheme(RevisionThemeDatabase(), revisionTheme: item).write();
         }
       }
     }
-    return true;
   }
 }

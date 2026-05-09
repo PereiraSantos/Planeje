@@ -70,7 +70,7 @@ class RegisterQuizPage extends StatelessWidget {
                         ? MessageUser.alert('Obrigatório ter uma questão.')
                         : _tableQuestionNotifier.addQuestion(
                             Question(description: question.text)
-                              ..setSync()
+                              ..setSync(true)
                               ..setInsertApp(true),
                           );
 
@@ -109,7 +109,7 @@ class RegisterQuizPage extends StatelessWidget {
                 registerQuiz.quiz?.setId(registerQuiz.quiz?.id);
                 registerQuiz.quiz?.setTopic(topic.text);
                 registerQuiz.quiz?.setDescription(description.text);
-                registerQuiz.quiz?.setSync();
+                registerQuiz.quiz?.setSync(true);
 
                 if (registerQuiz.quiz?.id == null) registerQuiz.quiz?.setInsertApp(true);
 

@@ -10,7 +10,6 @@ class TextButtonWidget extends StatelessWidget {
   factory TextButtonWidget.cancel(Function onClick) => TextButtonWidget(label: 'CANCELA', onClick: onClick);
   factory TextButtonWidget.back(Function onClick) => TextButtonWidget(label: 'VOLTAR', onClick: onClick);
   factory TextButtonWidget.save(Function onClick) => TextButtonWidget(label: 'SALVAR', onClick: onClick);
-  factory TextButtonWidget.sync(Function onClick) => TextButtonWidget(label: 'SINCRONIZAR', onClick: onClick);
 
   @override
   Widget build(BuildContext context) {

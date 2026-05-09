@@ -30,6 +30,7 @@ class FindRevisionDao {
               title: element['title'],
               idRevisionTheme: element['id_revision_theme'],
             ),
+
             DateRevision(
               dateRevision: listDate[0]['date_revision'],
               idRevision: listDate[0]['id_revision'],

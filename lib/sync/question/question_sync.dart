@@ -9,7 +9,7 @@ import 'package:planeje/utils/networking/endpoint/network.dart';
 import 'package:planeje/utils/request_item.dart';
 
 class QuestionSync {
-  Future<bool> getQuestion() async {
+  Future<void> getQuestion() async {
     Response response = await Network(ConfigApi(), [Endpoint.question]).get();
 
     QuestionController questionController = QuestionController();
@@ -25,29 +25,31 @@ class QuestionSync {
 
       await questionController.writeQuestion();
     }
-    return true;
   }
 
-  Future<bool> postQuestion() async {
+  Future<void> postQuestion() async {
     List<Question> lists = await GetQuestion(QuestionDatabase()).findAllQuestionSync() ?? [];
 
     if (lists.isNotEmpty) {
       for (Question item in lists) {
+        int idOld = item.id!;
+
         if (item.insertApp!) item.id = null;
 
         Response response = await Network(ConfigApi(), [Endpoint.question]).post(Question.fromObjectToMap(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
+          item.insertApp = false;
+          item.id = idOld;
 
           await QuestionDatabase().updateQuestion(item);
         }
       }
     }
-    return true;
   }
 
-  Future<bool> postQuestionDisable() async {
+  Future<void> postQuestionDisable() async {
     List<Question> lists = await GetQuestion(QuestionDatabase()).findQuestionDisable() ?? [];
 
     if (lists.isNotEmpty) {
@@ -55,12 +57,11 @@ class QuestionSync {
         Response response = await Network(ConfigApi(), [Endpoint.question, Endpoint.update]).post(RequestItem().convert(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
 
           await QuestionDatabase().updateQuestion(item);
         }
       }
     }
-    return true;
   }
 }

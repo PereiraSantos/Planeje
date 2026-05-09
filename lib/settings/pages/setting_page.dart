@@ -86,6 +86,7 @@ class SettingPage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 10),
                   child: Divider(color: Colors.grey, thickness: 1, indent: 20, endIndent: 20),
                 ),
+                Padding(padding: const EdgeInsets.only(left: 20), child: Text('Api')),
                 FutureBuilder(
                   future: ConfigHostApi().getHost(),
                   builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -131,21 +132,80 @@ class SettingPage extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  padding: const EdgeInsets.only(top: 10, bottom: 05),
                   child: Divider(color: Colors.grey, thickness: 1, indent: 20, endIndent: 20),
                 ),
+                Padding(padding: const EdgeInsets.only(left: 20), child: Text('Sincronização')),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(padding: EdgeInsets.only(left: 25.0, right: 20.0, top: 5.0), child: Text('Enviar dados')),
-                    ListenableBuilder(listenable: sync.syncNotifierPost, builder: (context, child) => sync.syncNotifierPost.status.build(context)),
+                    Container(
+                      margin: EdgeInsets.only(left: 20, top: 05, bottom: 10),
+                      width: 100,
+                      child: GestureDetector(
+                        onTap: () async {
+                          try {
+                            await sync.receiveData();
+
+                            if (context.mounted) MessageUser.success('Sincronização finalizada!!!');
+                          } catch (e) {
+                            if (context.mounted) MessageUser.error('Erro ao sincronização!!!');
+                          }
+                        },
+                        child: ButtonCustom(
+                          color: Colors.grey,
+                          child: Text('Receber Dados', style: TextStyle(color: Colors.grey)),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: ListenableBuilder(listenable: sync.syncNotifierGet, builder: (context, child) => sync.syncNotifierGet.status.build(context)),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(padding: EdgeInsets.only(left: 25.0, right: 20.0, top: 5.0), child: Text('Receber dados')),
-                    ListenableBuilder(listenable: sync.syncNotifierGet, builder: (context, child) => sync.syncNotifierGet.status.build(context)),
+                    Container(
+                      margin: EdgeInsets.only(left: 20, top: 05, bottom: 05),
+                      width: 100,
+                      child: GestureDetector(
+                        onTap: () async {
+                          try {
+                            await sync.postDataDisable();
+
+                            await sync.postData();
+
+                            if (context.mounted) MessageUser.success('Sincronização finalizada!!!');
+                          } catch (e) {
+                            if (context.mounted) MessageUser.error('Erro ao sincronização!!!');
+                          }
+                        },
+                        child: ButtonCustom(
+                          color: Colors.grey,
+                          child: Text('Enviar Dados', style: TextStyle(color: Colors.grey)),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: ListenableBuilder(listenable: sync.syncNotifierPost, builder: (context, child) => sync.syncNotifierPost.status.build(context)),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -153,11 +213,12 @@ class SettingPage extends StatelessWidget {
           ),
         ),
       ),
+
       persistentFooterButtons: [
         PersistentFooterWidget(
           children: [
             TextButtonWidget(
-              label: 'DESLOGAR',
+              label: 'ENCERRAR SESSÃO',
               onClick: () async {
                 await SessionManager().logout();
 
@@ -165,19 +226,6 @@ class SettingPage extends StatelessWidget {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
               },
             ),
-            TextButtonWidget.sync(() async {
-              try {
-                await sync.postDataDisable();
-
-                await sync.postData();
-
-                await sync.receiveData();
-
-                if (context.mounted) MessageUser.success('Sincronização finalizada!!!');
-              } catch (e) {
-                if (context.mounted) MessageUser.error('Erro ao sincronização!!!');
-              }
-            }),
           ],
         ),
       ],

@@ -118,23 +118,23 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `revision` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `description` TEXT, `date_creational` TEXT, `id_revision_theme` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `revision` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `description` TEXT, `date_creational` TEXT, `id_revision_theme` INTEGER, `sync` INTEGER NOT NULL, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `date_revision` (`id_date` INTEGER PRIMARY KEY AUTOINCREMENT, `date_revision` TEXT, `next_date_revision` TEXT, `id_revision` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `date_revision` (`id_date` INTEGER PRIMARY KEY AUTOINCREMENT, `date_revision` TEXT, `next_date_revision` TEXT, `id_revision` INTEGER, `sync` INTEGER NOT NULL, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `annotation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `text` TEXT, `date_text` TEXT, `id_revision` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `annotation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `text` TEXT, `date_text` TEXT, `id_revision` INTEGER, `sync` INTEGER NOT NULL, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `quiz` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `topic` TEXT, `description` TEXT, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `quiz` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `topic` TEXT, `description` TEXT, `sync` INTEGER NOT NULL, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `question` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `id_quiz` INTEGER, `description` TEXT, `answer` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `question` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `id_quiz` INTEGER, `description` TEXT, `answer` INTEGER, `sync` INTEGER NOT NULL, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `setting` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `keystone` TEXT, `value` TEXT)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `user` (`email` TEXT NOT NULL, `password` TEXT NOT NULL, PRIMARY KEY (`email`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `revision_quiz` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date_revision` TEXT, `answer` INTEGER, `id_quiz` INTEGER, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `revision_quiz` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date_revision` TEXT, `answer` INTEGER, `id_quiz` INTEGER, `sync` INTEGER NOT NULL, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `revision_theme` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `sync` INTEGER, `disable` INTEGER, `insert_app` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `revision_theme` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `sync` INTEGER NOT NULL, `disable` INTEGER, `insert_app` INTEGER)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `session` (`id` INTEGER NOT NULL, `email_user` TEXT NOT NULL, `token` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -227,7 +227,7 @@ class _$RevisionDao extends RevisionDao {
                   'description': item.description,
                   'date_creational': item.dateCreational,
                   'id_revision_theme': item.idRevisionTheme,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -243,7 +243,7 @@ class _$RevisionDao extends RevisionDao {
                   'description': item.description,
                   'date_creational': item.dateCreational,
                   'id_revision_theme': item.idRevisionTheme,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -269,7 +269,7 @@ class _$RevisionDao extends RevisionDao {
             description: row['description'] as String?,
             dateCreational: row['date_creational'] as String?,
             idRevisionTheme: row['id_revision_theme'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -280,14 +280,14 @@ class _$RevisionDao extends RevisionDao {
   @override
   Future<List<Revision>?> findAllRevisionsSync() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM revision where sync = 0 and disable = 0',
+        'SELECT * FROM revision where sync = 1 and disable = 0',
         mapper: (Map<String, Object?> row) => Revision(
             id: row['id'] as int?,
             title: row['title'] as String?,
             description: row['description'] as String?,
             dateCreational: row['date_creational'] as String?,
             idRevisionTheme: row['id_revision_theme'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -304,7 +304,7 @@ class _$RevisionDao extends RevisionDao {
             description: row['description'] as String?,
             dateCreational: row['date_creational'] as String?,
             idRevisionTheme: row['id_revision_theme'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -322,7 +322,7 @@ class _$RevisionDao extends RevisionDao {
             description: row['description'] as String?,
             dateCreational: row['date_creational'] as String?,
             idRevisionTheme: row['id_revision_theme'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -340,7 +340,7 @@ class _$RevisionDao extends RevisionDao {
             description: row['description'] as String?,
             dateCreational: row['date_creational'] as String?,
             idRevisionTheme: row['id_revision_theme'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -360,7 +360,7 @@ class _$RevisionDao extends RevisionDao {
             description: row['description'] as String?,
             dateCreational: row['date_creational'] as String?,
             idRevisionTheme: row['id_revision_theme'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -378,7 +378,7 @@ class _$RevisionDao extends RevisionDao {
             description: row['description'] as String?,
             dateCreational: row['date_creational'] as String?,
             idRevisionTheme: row['id_revision_theme'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -428,7 +428,7 @@ class _$DateRevisionDao extends DateRevisionDao {
                   'date_revision': item.dateRevision,
                   'next_date_revision': item.nextDateRevision,
                   'id_revision': item.idRevision,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -443,7 +443,7 @@ class _$DateRevisionDao extends DateRevisionDao {
                   'date_revision': item.dateRevision,
                   'next_date_revision': item.nextDateRevision,
                   'id_revision': item.idRevision,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -468,7 +468,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -479,13 +479,13 @@ class _$DateRevisionDao extends DateRevisionDao {
   @override
   Future<List<DateRevision>?> findAllDateRevisionSync() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM date_revision where sync = 0 and disable = 0',
+        'SELECT * FROM date_revision where sync = 1 and disable = 0',
         mapper: (Map<String, Object?> row) => DateRevision(
             id: row['id_date'] as int?,
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -502,7 +502,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -520,7 +520,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -538,7 +538,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -556,7 +556,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -606,7 +606,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -624,7 +624,7 @@ class _$DateRevisionDao extends DateRevisionDao {
   Future<DateRevision?> getDateRevisionByIdRevision(int idRevision) async {
     return _queryAdapter.query(
         'SELECT * FROM date_revision where id_revision = ?1 and disable = 0 order by date_revision desc limit 1',
-        mapper: (Map<String, Object?> row) => DateRevision(id: row['id_date'] as int?, dateRevision: row['date_revision'] as String?, nextDateRevision: row['next_date_revision'] as String?, idRevision: row['id_revision'] as int?, sync: row['sync'] == null ? null : (row['sync'] as int) != 0, disable: row['disable'] == null ? null : (row['disable'] as int) != 0, insertApp: row['insert_app'] == null ? null : (row['insert_app'] as int) != 0),
+        mapper: (Map<String, Object?> row) => DateRevision(id: row['id_date'] as int?, dateRevision: row['date_revision'] as String?, nextDateRevision: row['next_date_revision'] as String?, idRevision: row['id_revision'] as int?, sync: (row['sync'] as int) != 0, disable: row['disable'] == null ? null : (row['disable'] as int) != 0, insertApp: row['insert_app'] == null ? null : (row['insert_app'] as int) != 0),
         arguments: [idRevision]);
   }
 
@@ -638,7 +638,7 @@ class _$DateRevisionDao extends DateRevisionDao {
             dateRevision: row['date_revision'] as String?,
             nextDateRevision: row['next_date_revision'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -686,7 +686,7 @@ class _$AnnotationDao extends AnnotationDao {
                   'text': item.text,
                   'date_text': item.dateText,
                   'id_revision': item.idRevision,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -702,7 +702,7 @@ class _$AnnotationDao extends AnnotationDao {
                   'text': item.text,
                   'date_text': item.dateText,
                   'id_revision': item.idRevision,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -743,7 +743,7 @@ class _$AnnotationDao extends AnnotationDao {
             text: row['text'] as String?,
             dateText: row['date_text'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -762,7 +762,7 @@ class _$AnnotationDao extends AnnotationDao {
             text: row['text'] as String?,
             dateText: row['date_text'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -773,14 +773,14 @@ class _$AnnotationDao extends AnnotationDao {
   @override
   Future<List<Annotation>?> findAnnotationSync() async {
     return _queryAdapter.queryList(
-        'select * from annotation where sync = 0 and disable = 0',
+        'select * from annotation where sync = 1 and disable = 0',
         mapper: (Map<String, Object?> row) => Annotation(
             id: row['id'] as int?,
             title: row['title'] as String?,
             text: row['text'] as String?,
             dateText: row['date_text'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -797,7 +797,7 @@ class _$AnnotationDao extends AnnotationDao {
             text: row['text'] as String?,
             dateText: row['date_text'] as String?,
             idRevision: row['id_revision'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -847,7 +847,7 @@ class _$QuizDao extends QuizDao {
                   'id': item.id,
                   'topic': item.topic,
                   'description': item.description,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -861,7 +861,7 @@ class _$QuizDao extends QuizDao {
                   'id': item.id,
                   'topic': item.topic,
                   'description': item.description,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -885,7 +885,7 @@ class _$QuizDao extends QuizDao {
             id: row['id'] as int?,
             topic: row['topic'] as String?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -896,12 +896,12 @@ class _$QuizDao extends QuizDao {
   @override
   Future<List<Quiz>?> findAllQuizSync() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM quiz where sync = 0 and disable = 0',
+        'SELECT * FROM quiz where sync = 1 and disable = 0',
         mapper: (Map<String, Object?> row) => Quiz(
             id: row['id'] as int?,
             topic: row['topic'] as String?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -917,7 +917,7 @@ class _$QuizDao extends QuizDao {
             id: row['id'] as int?,
             topic: row['topic'] as String?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -933,7 +933,7 @@ class _$QuizDao extends QuizDao {
             id: row['id'] as int?,
             topic: row['topic'] as String?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -948,7 +948,7 @@ class _$QuizDao extends QuizDao {
             id: row['id'] as int?,
             topic: row['topic'] as String?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -964,7 +964,7 @@ class _$QuizDao extends QuizDao {
             id: row['id'] as int?,
             topic: row['topic'] as String?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1015,7 +1015,7 @@ class _$QuestionDao extends QuestionDao {
                   'id_quiz': item.idQuiz,
                   'description': item.description,
                   'answer': item.answer == null ? null : (item.answer! ? 1 : 0),
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -1030,7 +1030,7 @@ class _$QuestionDao extends QuestionDao {
                   'id_quiz': item.idQuiz,
                   'description': item.description,
                   'answer': item.answer == null ? null : (item.answer! ? 1 : 0),
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -1055,7 +1055,7 @@ class _$QuestionDao extends QuestionDao {
             idQuiz: row['id_quiz'] as int?,
             description: row['description'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1066,13 +1066,13 @@ class _$QuestionDao extends QuestionDao {
   @override
   Future<List<Question>?> findAllQuestionSync() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM question where sync = 0 and disable = 0',
+        'SELECT * FROM question where sync = 1 and disable = 0',
         mapper: (Map<String, Object?> row) => Question(
             id: row['id'] as int?,
             idQuiz: row['id_quiz'] as int?,
             description: row['description'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1089,7 +1089,7 @@ class _$QuestionDao extends QuestionDao {
             idQuiz: row['id_quiz'] as int?,
             description: row['description'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1107,7 +1107,7 @@ class _$QuestionDao extends QuestionDao {
             idQuiz: row['id_quiz'] as int?,
             description: row['description'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1124,7 +1124,7 @@ class _$QuestionDao extends QuestionDao {
             idQuiz: row['id_quiz'] as int?,
             description: row['description'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1297,7 +1297,7 @@ class _$RevisionQuizDao extends RevisionQuizDao {
                   'date_revision': item.dateRevision,
                   'answer': item.answer == null ? null : (item.answer! ? 1 : 0),
                   'id_quiz': item.idQuiz,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -1312,7 +1312,7 @@ class _$RevisionQuizDao extends RevisionQuizDao {
                   'date_revision': item.dateRevision,
                   'answer': item.answer == null ? null : (item.answer! ? 1 : 0),
                   'id_quiz': item.idQuiz,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -1338,7 +1338,7 @@ class _$RevisionQuizDao extends RevisionQuizDao {
             dateRevision: row['date_revision'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
             idQuiz: row['id_quiz'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1349,13 +1349,13 @@ class _$RevisionQuizDao extends RevisionQuizDao {
   @override
   Future<List<RevisionQuiz>?> findAllRevisionQuizSync() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM revision_quiz where sync = 0 and disable = 0',
+        'SELECT * FROM revision_quiz where sync = 1 and disable = 0',
         mapper: (Map<String, Object?> row) => RevisionQuiz(
             id: row['id'] as int?,
             dateRevision: row['date_revision'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
             idQuiz: row['id_quiz'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1372,7 +1372,7 @@ class _$RevisionQuizDao extends RevisionQuizDao {
             dateRevision: row['date_revision'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
             idQuiz: row['id_quiz'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1390,7 +1390,7 @@ class _$RevisionQuizDao extends RevisionQuizDao {
             dateRevision: row['date_revision'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
             idQuiz: row['id_quiz'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1408,7 +1408,7 @@ class _$RevisionQuizDao extends RevisionQuizDao {
             dateRevision: row['date_revision'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
             idQuiz: row['id_quiz'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1425,7 +1425,7 @@ class _$RevisionQuizDao extends RevisionQuizDao {
             dateRevision: row['date_revision'] as String?,
             answer: row['answer'] == null ? null : (row['answer'] as int) != 0,
             idQuiz: row['id_quiz'] as int?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1482,7 +1482,7 @@ class _$RevisionThemeDao extends RevisionThemeDao {
             (RevisionTheme item) => <String, Object?>{
                   'id': item.id,
                   'description': item.description,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -1495,7 +1495,7 @@ class _$RevisionThemeDao extends RevisionThemeDao {
             (RevisionTheme item) => <String, Object?>{
                   'id': item.id,
                   'description': item.description,
-                  'sync': item.sync == null ? null : (item.sync! ? 1 : 0),
+                  'sync': item.sync ? 1 : 0,
                   'disable':
                       item.disable == null ? null : (item.disable! ? 1 : 0),
                   'insert_app':
@@ -1518,7 +1518,7 @@ class _$RevisionThemeDao extends RevisionThemeDao {
         mapper: (Map<String, Object?> row) => RevisionTheme(
             id: row['id'] as int?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1529,11 +1529,11 @@ class _$RevisionThemeDao extends RevisionThemeDao {
   @override
   Future<List<RevisionTheme>?> findAllRevisionThemeSync() async {
     return _queryAdapter.queryList(
-        'SELECT * FROM revision_theme where sync = 0 and disable = 0',
+        'SELECT * FROM revision_theme where sync = 1 and disable = 0',
         mapper: (Map<String, Object?> row) => RevisionTheme(
             id: row['id'] as int?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1548,7 +1548,7 @@ class _$RevisionThemeDao extends RevisionThemeDao {
         mapper: (Map<String, Object?> row) => RevisionTheme(
             id: row['id'] as int?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1562,7 +1562,7 @@ class _$RevisionThemeDao extends RevisionThemeDao {
         mapper: (Map<String, Object?> row) => RevisionTheme(
             id: row['id'] as int?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1578,7 +1578,7 @@ class _$RevisionThemeDao extends RevisionThemeDao {
         mapper: (Map<String, Object?> row) => RevisionTheme(
             id: row['id'] as int?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null
@@ -1595,7 +1595,7 @@ class _$RevisionThemeDao extends RevisionThemeDao {
         mapper: (Map<String, Object?> row) => RevisionTheme(
             id: row['id'] as int?,
             description: row['description'] as String?,
-            sync: row['sync'] == null ? null : (row['sync'] as int) != 0,
+            sync: (row['sync'] as int) != 0,
             disable:
                 row['disable'] == null ? null : (row['disable'] as int) != 0,
             insertApp: row['insert_app'] == null

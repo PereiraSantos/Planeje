@@ -11,10 +11,7 @@ class PersistentFooterWidget extends StatelessWidget {
     return Container(
       color: const Color(0xffffffff),
       padding: const EdgeInsets.only(bottom: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: children,
-      ),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: children),
     );
   }
 }

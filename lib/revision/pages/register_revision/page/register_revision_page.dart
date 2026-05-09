@@ -223,7 +223,7 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                 widget.revision.revision?.setTitle(title.text);
                 widget.revision.revision?.setDescription(description.text);
                 widget.revision.revision?.setDateCreational(widget.revision.revision?.dateCreational);
-                widget.revision.revision?.setSync();
+                widget.revision.revision?.setSync(true);
                 widget.revision.revision?.setIdTevisionTheme(widget.id);
 
                 if (widget.revision.revision?.id == null) widget.revision.revision?.setInsertApp(true);
@@ -236,6 +236,9 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                   registerDateRevision.dateRevision!.setDate(FormatDate.formatDateStringNotification(dateRevision));
                   registerDateRevision.dateRevision!.setNextDate(nextDateRevision.value);
                   registerDateRevision.dateRevision!.setIdRevision(idRevision);
+                  registerDateRevision.dateRevision!.setSync(true);
+                  registerDateRevision.dateRevision!.setInsertApp(true);
+
                   await registerDateRevision.writeDateRevision();
                 } else {
                   UpdateDateRevision(
@@ -264,7 +267,7 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
 
                   registerAnnotation.annotation?.setIdRevision(widget.revision.revision?.id ?? idRevision);
                   registerAnnotation.annotation?.setDateText(null);
-                  registerAnnotation.annotation?.setSync();
+                  registerAnnotation.annotation?.setSync(true);
 
                   annotation.id == null
                       ? await registerAnnotation.write()
@@ -276,7 +279,7 @@ class _RegisterRevisionPageState extends State<RegisterRevisionPage> {
                             title: annotation.title,
                             text: annotation.text,
                             dateText: annotation.dateText,
-                          )..setSync(),
+                          )..setSync(true),
                           message: StatusNotification(),
                         ).write();
                 }

@@ -6,7 +6,7 @@ abstract class RevisionThemeDao {
   @Query('SELECT * FROM revision_theme')
   Future<List<RevisionTheme>> findAllRevisionTheme();
 
-  @Query('SELECT * FROM revision_theme where sync = 0 and disable = 0')
+  @Query('SELECT * FROM revision_theme where sync = 1 and disable = 0')
   Future<List<RevisionTheme>?> findAllRevisionThemeSync();
 
   @Query('SELECT * FROM revision_theme where disable = 1')

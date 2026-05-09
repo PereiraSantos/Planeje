@@ -92,7 +92,7 @@ class DialogRevision {
                           dateRevision: FormatDate.formatDateStringNotification(dateRevision),
                           nextDateRevision: nextDateRevision.value,
                           idRevision: idRevision,
-                          sync: false,
+                          sync: true,
                           insertApp: true,
                         ),
                       ).writeDateRevision();

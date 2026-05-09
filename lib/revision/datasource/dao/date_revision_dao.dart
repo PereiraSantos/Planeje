@@ -6,7 +6,7 @@ abstract class DateRevisionDao {
   @Query('SELECT * FROM date_revision')
   Future<List<DateRevision>> findAllRevisions();
 
-  @Query('SELECT * FROM date_revision where sync = 0 and disable = 0')
+  @Query('SELECT * FROM date_revision where sync = 1 and disable = 0')
   Future<List<DateRevision>?> findAllDateRevisionSync();
 
   @Query('SELECT * FROM date_revision where disable = 1')

@@ -6,7 +6,7 @@ abstract class QuestionDao {
   @Query('SELECT * FROM question')
   Future<List<Question>?> getAllQuestion();
 
-  @Query('SELECT * FROM question where sync = 0 and disable = 0')
+  @Query('SELECT * FROM question where sync = 1 and disable = 0')
   Future<List<Question>?> findAllQuestionSync();
 
   @insert

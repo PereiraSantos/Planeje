@@ -11,7 +11,7 @@ import 'package:planeje/utils/networking/endpoint/network.dart';
 import 'package:planeje/utils/request_item.dart';
 
 class AnnotationSync {
-  Future<bool> getAnnotation() async {
+  Future<void> getAnnotation() async {
     Response response = await Network(ConfigApi(), [Endpoint.annotation]).get();
 
     AnnotationController annotationController = AnnotationController();
@@ -26,29 +26,31 @@ class AnnotationSync {
 
       await annotationController.writeAnnotation();
     }
-    return true;
   }
 
-  Future<bool> postAnnotation() async {
+  Future<void> postAnnotation() async {
     List<Annotation> lists = await GetAnnotation(AnnotationDatabase()).findAnnotationSync() ?? [];
 
     if (lists.isNotEmpty) {
       for (Annotation item in lists) {
+        int idOld = item.id!;
+
         if (item.insertApp!) item.id = null;
 
         Response response = await Network(ConfigApi(), [Endpoint.annotation]).post(Annotation.fromObjectToMap(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
+          item.insertApp = false;
+          item.id = idOld;
 
           await UpdateAnnotation(AnnotationDatabase(), annotation: item).write();
         }
       }
     }
-    return true;
   }
 
-  Future<bool> postAnnotationDisable() async {
+  Future<void> postAnnotationDisable() async {
     List<Annotation> lists = await GetAnnotation(AnnotationDatabase()).findAnnotationDisable() ?? [];
 
     if (lists.isNotEmpty) {
@@ -56,12 +58,11 @@ class AnnotationSync {
         Response response = await Network(ConfigApi(), [Endpoint.annotation, Endpoint.update]).post(RequestItem().convert(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
 
           await UpdateAnnotation(AnnotationDatabase(), annotation: item).write();
         }
       }
     }
-    return true;
   }
 }

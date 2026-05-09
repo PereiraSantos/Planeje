@@ -20,7 +20,7 @@ class Revision {
   int? idRevisionTheme;
 
   @ColumnInfo(name: 'sync')
-  bool? sync;
+  bool sync;
 
   @ColumnInfo(name: 'disable')
   bool? disable;
@@ -28,14 +28,14 @@ class Revision {
   @ColumnInfo(name: 'insert_app')
   bool? insertApp;
 
-  Revision({this.id, this.title, this.description, this.dateCreational, this.idRevisionTheme, this.sync = true, this.disable = false, this.insertApp = false});
+  Revision({this.id, this.title, this.description, this.dateCreational, this.idRevisionTheme, this.sync = false, this.disable = false, this.insertApp = false});
 
   void setId(int? value) => id = value;
   void setTitle(String value) => title = value;
   void setDescription(String value) => description = value;
   void setDateCreational(String? value) => dateCreational = value ?? FormatDate.formatDate(FormatDate.newDate());
   void setIdTevisionTheme(int value) => idRevisionTheme = value;
-  void setSync({bool? value}) => sync = value ?? false;
+  void setSync(bool value) => sync = value;
   void setDisable(bool value) => disable = value;
   void setInsertApp(bool value) => insertApp = value;
 
@@ -45,6 +45,7 @@ class Revision {
     description: json['description'],
     dateCreational: json['dateCreational'],
     idRevisionTheme: json['idRevisionTheme'],
+    sync: false,
   );
 
   static Map<String, dynamic> fromObjectToMap(Revision revision) => {

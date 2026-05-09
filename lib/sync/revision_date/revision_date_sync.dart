@@ -10,7 +10,7 @@ import 'package:planeje/utils/networking/endpoint/network.dart';
 import 'package:planeje/utils/request_item.dart';
 
 class RevisionDateSync {
-  Future<bool> getRevisionDate() async {
+  Future<void> getRevisionDate() async {
     Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.date]).get();
 
     RevisionDateController revisionDateController = RevisionDateController();
@@ -18,6 +18,7 @@ class RevisionDateSync {
     if (response.data != null) {
       for (dynamic item in response.data) {
         DateRevision dateRevision = DateRevision.fromMapToObject(item);
+        dateRevision.sync = false;
 
         revisionDateController.revisionDates.add(dateRevision);
       }
@@ -26,29 +27,31 @@ class RevisionDateSync {
 
       await revisionDateController.writeRevisionData();
     }
-    return true;
   }
 
-  Future<bool> postRevisionDate() async {
+  Future<void> postRevisionDate() async {
     List<DateRevision>? lists = await GetDateRevision(DateRevisionDatabase()).findAllDateRevisionSync() ?? [];
 
     if (lists.isNotEmpty) {
       for (DateRevision item in lists) {
+        int idOld = item.id!;
+
         if (item.insertApp!) item.id = null;
 
         Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.date]).post(DateRevision.fromObjectToMap(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
+          item.insertApp = false;
+          item.id = idOld;
 
           await UpdateDateRevision(DateRevisionDatabase(), dateRevision: item).writeDateRevision();
         }
       }
     }
-    return true;
   }
 
-  Future<bool> postRevisionDateDisable() async {
+  Future<void> postRevisionDateDisable() async {
     List<DateRevision>? lists = await GetDateRevision(DateRevisionDatabase()).findDateRevisionDisable() ?? [];
 
     if (lists.isNotEmpty) {
@@ -56,12 +59,11 @@ class RevisionDateSync {
         Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.date, Endpoint.update]).post(RequestItem().convert(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
 
           await UpdateDateRevision(DateRevisionDatabase(), dateRevision: item).writeDateRevision();
         }
       }
     }
-    return true;
   }
 }

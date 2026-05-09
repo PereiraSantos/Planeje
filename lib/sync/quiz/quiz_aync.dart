@@ -17,7 +17,7 @@ import 'package:planeje/utils/networking/endpoint/network.dart';
 import 'package:planeje/utils/request_item.dart';
 
 class QuizAync {
-  Future<bool> getQuiz() async {
+  Future<void> getQuiz() async {
     Response response = await Network(ConfigApi(), [Endpoint.quiz]).get();
 
     QuizController quizController = QuizController();
@@ -33,10 +33,9 @@ class QuizAync {
 
       await quizController.writeQuiz();
     }
-    return true;
   }
 
-  Future<bool> posQuiz() async {
+  Future<void> posQuiz() async {
     List<Quiz> lists = await GetQuiz(QuizDatabase()).findAllQuizSync() ?? [];
 
     if (lists.isNotEmpty) {
@@ -48,7 +47,9 @@ class QuizAync {
         Response response = await Network(ConfigApi(), [Endpoint.quiz]).post(Quiz.fromObjectToMap(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
+          item.insertApp = false;
+          item.id = idOld;
 
           await UpdateQuiz(QuizDatabase(), quiz: item).writeQuiz();
 
@@ -57,7 +58,6 @@ class QuizAync {
         }
       }
     }
-    return true;
   }
 
   Future<void> updateIdQuizQuestion(int id, int idOld) async {
@@ -84,7 +84,7 @@ class QuizAync {
     }
   }
 
-  Future<bool> posQuizDisable() async {
+  Future<void> posQuizDisable() async {
     List<Quiz> lists = await GetQuiz(QuizDatabase()).findQuizDisable() ?? [];
 
     if (lists.isNotEmpty) {
@@ -92,12 +92,11 @@ class QuizAync {
         Response response = await Network(ConfigApi(), [Endpoint.quiz, Endpoint.update]).post(RequestItem().convert(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
 
           await UpdateQuiz(QuizDatabase(), quiz: item).writeQuiz();
         }
       }
     }
-    return true;
   }
 }

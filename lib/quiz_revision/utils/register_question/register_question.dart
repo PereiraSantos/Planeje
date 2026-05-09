@@ -24,6 +24,9 @@ class SaveQuestion implements RegisterQuestionFactory {
   @override
   Future<bool> writeQuestion(List<QuestionList> questionList) async {
     for (var item in questionList) {
+      item.question?.sync = true;
+      item.question?.insertApp = true;
+
       if (item.add) await questionDatabase.insertQuestion(item.question!);
       if (item.update) await questionDatabase.updateQuestion(item.question!);
     }

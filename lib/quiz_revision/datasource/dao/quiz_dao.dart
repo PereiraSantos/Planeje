@@ -6,7 +6,7 @@ abstract class QuizDao {
   @Query('SELECT * FROM quiz where disable = 0')
   Future<List<Quiz>?> getAllQuiz();
 
-  @Query('SELECT * FROM quiz where sync = 0 and disable = 0')
+  @Query('SELECT * FROM quiz where sync = 1 and disable = 0')
   Future<List<Quiz>?> findAllQuizSync();
 
   @Query('SELECT * FROM quiz where topic LIKE :text and disable = 0')

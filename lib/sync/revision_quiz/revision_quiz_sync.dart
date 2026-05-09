@@ -12,7 +12,7 @@ import 'package:planeje/utils/networking/endpoint/network.dart';
 import 'package:planeje/utils/request_item.dart';
 
 class RevisionQuizSync {
-  Future<bool> getRevisionQuiz() async {
+  Future<void> getRevisionQuiz() async {
     Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.quiz]).get();
 
     RevisionQuizController revisionQuizController = RevisionQuizController();
@@ -27,29 +27,30 @@ class RevisionQuizSync {
 
       await revisionQuizController.writeRevisionQuiz();
     }
-    return true;
   }
 
-  Future<bool> postRevisionQuiz() async {
+  Future<void> postRevisionQuiz() async {
     List<RevisionQuiz> lists = await GetRevisionQuiz(RevisionQuizDatabase()).findAllRevisionQuizSync() ?? [];
 
     if (lists.isNotEmpty) {
       for (RevisionQuiz item in lists) {
+        int idOld = item.id!;
         if (item.insertApp!) item.id = null;
 
         Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.quiz]).post(RevisionQuiz.fromObjectToMap(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
+          item.insertApp = false;
+          item.id = idOld;
 
           await UpdateRevisionQuiz(RevisionQuizDatabase(), revisionQuiz: item).writeRevisionQuiz();
         }
       }
     }
-    return true;
   }
 
-  Future<bool> postRevisionQuizDisable() async {
+  Future<void> postRevisionQuizDisable() async {
     List<RevisionQuiz> lists = await GetRevisionQuiz(RevisionQuizDatabase()).findRevisionQuizDisable() ?? [];
 
     if (lists.isNotEmpty) {
@@ -57,12 +58,11 @@ class RevisionQuizSync {
         Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.quiz, Endpoint.update]).post(RequestItem().convert(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
 
           await UpdateRevisionQuiz(RevisionQuizDatabase(), revisionQuiz: item).writeRevisionQuiz();
         }
       }
     }
-    return true;
   }
 }

@@ -17,7 +17,7 @@ class DateRevision {
   int? idRevision;
 
   @ColumnInfo(name: 'sync')
-  bool? sync;
+  bool sync;
 
   @ColumnInfo(name: 'disable')
   bool? disable;
@@ -31,12 +31,12 @@ class DateRevision {
   void setDate(String? value) => dateRevision = value ?? FormatDate.formatDate(DateTime.now());
   void setNextDate(String? value) => nextDateRevision = value;
   void setIdRevision(int? value) => idRevision = value;
-  void setSync(bool? value) => sync = value ?? false;
+  void setSync(bool value) => sync = value;
   void setDisable(bool value) => disable = value;
   void setInsertApp(bool value) => insertApp = value;
 
   static DateRevision fromMapToObject(Map<String, dynamic> json) =>
-      DateRevision(id: json['id'], dateRevision: json['dateRevision'], idRevision: json['idRevision'], nextDateRevision: json['nextdateRevision']);
+      DateRevision(id: json['id'], dateRevision: json['dateRevision'], idRevision: json['idRevision'], nextDateRevision: json['nextdateRevision'], sync: false);
 
   static Map<String, dynamic> fromObjectToMap(DateRevision dateRevision) => {
     "id": dateRevision.id,

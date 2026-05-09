@@ -39,7 +39,7 @@ class Sync {
     }
   }
 
-  Future<bool> postData() async {
+  Future<void> postData() async {
     try {
       syncNotifierPost.loading();
 
@@ -52,15 +52,13 @@ class Sync {
       await RevisionQuizSync().postRevisionQuiz();
 
       syncNotifierPost.concluded();
-
-      return true;
     } catch (e) {
       syncNotifierPost.erro();
       rethrow;
     }
   }
 
-  Future<bool> postDataDisable() async {
+  Future<void> postDataDisable() async {
     try {
       syncNotifierPostDisable.loading();
 
@@ -74,8 +72,6 @@ class Sync {
         RevisionThemeSync().postRevisionThemeDisable(),
       ]);
       syncNotifierPostDisable.concluded();
-
-      return true;
     } catch (e) {
       syncNotifierPostDisable.erro();
       rethrow;

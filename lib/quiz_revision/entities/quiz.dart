@@ -13,7 +13,7 @@ class Quiz {
   String? description;
 
   @ColumnInfo(name: 'sync')
-  bool? sync;
+  bool sync;
 
   @ColumnInfo(name: 'disable')
   bool? disable;
@@ -21,31 +21,16 @@ class Quiz {
   @ColumnInfo(name: 'insert_app')
   bool? insertApp;
 
-  Quiz({
-    this.id,
-    this.topic,
-    this.description,
-    this.sync = true,
-    this.disable = false,
-    this.insertApp = false,
-  });
+  Quiz({this.id, this.topic, this.description, this.sync = true, this.disable = false, this.insertApp = false});
 
   void setId(int? value) => id = value;
   void setTopic(String? value) => topic = value;
   void setDescription(String? value) => description = value;
-  void setSync({bool? value}) => sync = value ?? false;
+  void setSync(bool value) => sync = value;
   void setDisable(bool value) => disable = value;
   void setInsertApp(bool value) => insertApp = value;
 
-  static Quiz fromMapToObject(Map<String, dynamic> json) => Quiz(
-        id: json['id'],
-        topic: json['topic'],
-        description: json['description'],
-      );
+  static Quiz fromMapToObject(Map<String, dynamic> json) => Quiz(id: json['id'], topic: json['topic'], description: json['description'], sync: false);
 
-  static Map<String, dynamic> fromObjectToMap(Quiz quiz) => {
-        "id": quiz.id,
-        "topic": quiz.topic,
-        "description": quiz.description,
-      };
+  static Map<String, dynamic> fromObjectToMap(Quiz quiz) => {"id": quiz.id, "topic": quiz.topic, "description": quiz.description};
 }

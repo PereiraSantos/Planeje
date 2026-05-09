@@ -18,7 +18,7 @@ import 'package:planeje/utils/networking/endpoint/network.dart';
 import 'package:planeje/utils/request_item.dart';
 
 class RevisionSync {
-  Future<bool> getRevision() async {
+  Future<void> getRevision() async {
     Response response = await Network(ConfigApi(), [Endpoint.revision]).get();
 
     RevisionController revisionController = RevisionController();
@@ -34,10 +34,9 @@ class RevisionSync {
 
       await revisionController.writeRevision();
     }
-    return true;
   }
 
-  Future<bool> postRevision() async {
+  Future<void> postRevision() async {
     List<Revision>? lists = await GetRevision(RevisionDatabase()).findAllRevisionsSync() ?? [];
 
     if (lists.isNotEmpty) {
@@ -49,7 +48,9 @@ class RevisionSync {
         Response response = await Network(ConfigApi(), [Endpoint.revision]).post(Revision.fromObjectToMap(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
+          item.insertApp = false;
+          item.id = idOld;
 
           await Update(RevisionDatabase(), revision: item).write();
 
@@ -58,8 +59,6 @@ class RevisionSync {
         }
       }
     }
-
-    return true;
   }
 
   Future<void> updateIdRevisionAnnotation(int id, int idOld) async {
@@ -86,7 +85,7 @@ class RevisionSync {
     }
   }
 
-  Future<bool> postRevisionDisable() async {
+  Future<void> postRevisionDisable() async {
     List<Revision>? lists = await GetRevision(RevisionDatabase()).findRevisionDisable() ?? [];
 
     if (lists.isNotEmpty) {
@@ -94,13 +93,11 @@ class RevisionSync {
         Response response = await Network(ConfigApi(), [Endpoint.revision, Endpoint.update]).post(RequestItem().convert(item));
 
         if (response.data != null) {
-          item.sync = true;
+          item.sync = false;
 
           await Update(RevisionDatabase(), revision: item).write();
         }
       }
     }
-
-    return true;
   }
 }

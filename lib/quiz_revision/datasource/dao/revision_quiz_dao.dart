@@ -6,7 +6,7 @@ abstract class RevisionQuizDao {
   @Query('SELECT * FROM revision_quiz where disable = 0')
   Future<List<RevisionQuiz>?> getAllRevisionQuiz();
 
-  @Query('SELECT * FROM revision_quiz where sync = 0 and disable = 0')
+  @Query('SELECT * FROM revision_quiz where sync = 1 and disable = 0')
   Future<List<RevisionQuiz>?> findAllRevisionQuizSync();
 
   @insert

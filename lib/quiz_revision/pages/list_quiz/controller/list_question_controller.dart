@@ -26,9 +26,11 @@ class ListQuestionController {
   }
 
   Future<void> registerRevisionQuiz(List<Question> list, int index) async {
-    await revisionQuizDatabase.insertRevisionQuiz(RevisionQuiz(idQuiz: list[index].idQuiz, answer: list[index].answer)
-      ..setDate()
-      ..setSync()
-      ..setInsertApp(true));
+    await revisionQuizDatabase.insertRevisionQuiz(
+      RevisionQuiz(idQuiz: list[index].idQuiz, answer: list[index].answer)
+        ..setDate()
+        ..setSync(true)
+        ..setInsertApp(true),
+    );
   }
 }

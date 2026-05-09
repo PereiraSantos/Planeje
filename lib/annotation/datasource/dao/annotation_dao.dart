@@ -24,7 +24,7 @@ abstract class AnnotationDao {
   @Query('select * from annotation where and disable = 0')
   Future<List<Annotation>?> getAnnotationAll();
 
-  @Query('select * from annotation where sync = 0 and disable = 0')
+  @Query('select * from annotation where sync = 1 and disable = 0')
   Future<List<Annotation>?> findAnnotationSync();
 
   @Query('SELECT * FROM annotation where disable = 1')
