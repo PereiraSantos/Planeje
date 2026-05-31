@@ -68,7 +68,12 @@ class RevisionThemeInfoDao {
         revisionThemeComplements.add(revisionThemeComplement);
       }
 
-      return revisionThemeComplements;
+      var nextDateRevisionisEmpty = revisionThemeComplements.where((e) => e.nextDateRevision == null).toList();
+      var nextDateRevisionisNotEmpty = revisionThemeComplements.where((e) => e.nextDateRevision != null).toList();
+
+      nextDateRevisionisNotEmpty.sort((a, b) => FormatDate.dateParse(a.nextDateRevision!).compareTo(FormatDate.dateParse(b.nextDateRevision!)));
+
+      return [...nextDateRevisionisNotEmpty, ...nextDateRevisionisEmpty];
     } catch (e) {
       rethrow;
     }

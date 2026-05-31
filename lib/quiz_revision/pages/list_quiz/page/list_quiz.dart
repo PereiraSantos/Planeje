@@ -147,6 +147,7 @@ class _ListQuizState extends State<ListQuiz> {
                               child: Text(
                                 "Pergunta: ${snapshot.data![index].description}",
                                 overflow: TextOverflow.ellipsis,
+                                maxLines: 5,
                                 style: const TextStyle(fontSize: 15, color: Colors.black54, fontWeight: FontWeight.w400),
                               ),
                             ),
